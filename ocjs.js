@@ -1,6 +1,5 @@
 "use strict";
 
-
 /*棋盘类*/
 function Chessboard() {
 	var oo = this;
@@ -15,14 +14,16 @@ function Chessboard() {
 		for (var i = 0; i < 64; i++)
 			(function (i) {
 				td[i].onclick = function () {
-					if (pieces[i].className == "prompt")//点击的时候这个其实是下棋
+					if (pieces[i].className == "prompt")//标签中可以走的位置已被标记 prompt
 						oo.toDown(i);//下棋的指令
 				}
 			})(i);
 		td = undefined;
 	}
 
-	oo.create = function () {		//创建棋盘
+	oo.create = function (toDown = null) {		//创建棋盘，toDown 为下棋后触发的事件
+		oo.toDown = toDown;
+
 		var obj = document.getElementById("chessboard");
 		var html = "<table>";//这个地方创建是通过改变html来创建的，使用table创建
 		for (var i = 0; i < 8; i++) {
@@ -63,60 +64,57 @@ function Chessboard() {
 }
 
 
-/*棋盘逻辑类*/
+/* 棋盘逻辑类 */
 function Othello() {
-	var oo = this;//oo申明是类本身
+	var oo = this;			// oo申明是类本身
 
-	var map = [];			//棋局数组
-	var history = [];		//历史记录,用于悔棋操作
+	var map = [];			// 棋局数组
+	var history = [];		// 历史记录,用于悔棋操作
 
 	var zobrist = new Zobrist();
-	oo.aiSide = 0;	//先行方：1: 电脑为黑棋,  -1: 电脑为白棋,  0: 双人对战 2: 电脑自己对战
+	oo.aiSide = 0;			// 先行方：1: 电脑为黑棋, -1: 电脑为白棋,  0: 双人对战 2: 电脑自己对战
 
 	var aiRuning = false;	//AI运算中...
-	var aiRuningObj = document.getElementById("airuning");//也就是指示出现提示框
-	var passObj = document.getElementById("pass");//没有棋下的时候就返回这个
+	var aiRuningObj = document.getElementById("airuning");		// 也就是指示出现提示框
+	var passObj = document.getElementById("pass");				// 没有棋下的时候就返回这个
 
-	var timer;		//定时器id：局时
+	var timer;													// 定时器id：局时
 
-	var aiNum = 1;//ai的个数
+	var aiNum = 1;												// ai的个数
 
-	oo.play = function () {//开始新棋局：所有的数据初始化都在这里，这个是main
+	oo.play = function () {										// 开始新棋局：所有的数据初始化都在这里，这个是 main
 
-		if (aiRuning)//要是ai运行就跳过
+		if (aiRuning)											// 要是ai运行就跳过
 			return;
-		clearTimeout(timer);//清空计时器
-		console.clear();
-		//console.time("计时器1");
+		clearTimeout(timer);// 清空计时器
 
+		console.clear();		// 清空控制台下信息，用于调试方便
 
-		//棋盘初始化
-		map = [];
-		for (var i = 0; i < 64; i++)
-			map[i] = 0;					//空格为 0
-		map[28] = map[35] = 1;			//黑子为 1
-		map[27] = map[36] = -1;			//白子为 -1
+		// 棋盘初始化
+		map = new Array(64).fill(0);	// 空格为 0
+		map[28] = map[35] = 1;			// 黑子为 1
+		map[27] = map[36] = -1;			// 白子为 -1
 
-		map.black = map.white = 2;		//黑白棋子数目
-		map.space = 60;		//空格数目（64个格子，但是一开始4个是有东西的了）
+		map.black = map.white = 2;		// 黑白棋子数目
+		map.space = 60;					// 空格数目（64个格子，但是一开始4个是有东西的了）
 
 		map.frontier = [];
 		var tk = [18, 19, 20, 21, 26, 29, 34, 37, 42, 43, 44, 45];//用于初始化的暂存数据
 		for (var i = 0; i < 12; i++)
 			map.frontier[tk[i]] = true;
 
-		map.side = 1;		//当前执棋方（1.黑棋 0.白棋）
-		map.newPos = -1;	//最新下子的位置
-		map.newRev = [];	//最新反转棋子的位置
-		map.nextIndex = [];	//下一步可走棋的位置
-		map.next = {};		//下一步可走棋的反转棋子
-		map.nextNum = 0;	//下一步可走棋的数目
-		map.prevNum = 0;	//上一步可走棋的数目
-		map.key = [0, 0];	//用于置换表的键值
+		map.side = 1;		// 当前执棋方（1.黑棋 0.白棋）
+		map.newPos = -1;	// 最新下子的位置
+		map.newRev = [];	// 最新反转棋子的位置
+		map.nextIndex = [];	// 下一步可走棋的位置
+		map.next = {};		// 下一步可走棋的反转棋子
+		map.nextNum = 0;	// 下一步可走棋的数目
+		map.prevNum = 0;	// 上一步可走棋的数目
+		map.key = [0, 0];	// 用于置换表的键值
 
-		history = [];       //历史记录
+		history = [];       // 历史记录
 
-		update();//update更新上面的初始化数据
+		update();			// update更新上面的初始化数据
 	}
 
 
@@ -155,7 +153,7 @@ function Othello() {
 	function aiRun() {		//电脑走棋
 		if (map.nextNum == 1)	//就一步棋可走了,还搜索什么?
 			oo.go(map.nextIndex[0]);
-		else if (map.space <= 58){//这个是两步以后就开始使用startSearch来走棋了
+		else if (map.space <= 58) {//这个是两步以后就开始使用startSearch来走棋了
 			//对AI进行设定
 			if (oo.aiNum == 1) {
 				oo.go(ai6.startSearch(map));
@@ -306,13 +304,11 @@ function Othello() {
 
 	function setPassStatus(t) {//设置pass状态：无棋可下就pass
 		passObj.style.display = t ? "block" : "none";
-		if (t){
+		if (t) {
 			passObj.innerHTML = map.side == 1 ? "白方无棋可下，黑方继续下子" : "黑方无棋可下，白方继续下子";
 		}
 	}
-
 }
-
 
 function Zobrist() {//Zobrist
 	var oo = this;
@@ -343,22 +339,16 @@ function Zobrist() {//Zobrist
 
 
 
-
-
-
-
-
 /*main*/
-var board = new Chessboard();
-var ai6 = new AI6();
-var othe = new Othello();
+var board = new Chessboard();	// 创建棋盘对象
+var ai6 = new AI6();			// 创建 AI
+var othe = new Othello();		// 创建逻辑控制对象
+board.create(othe.goChess);		// 棋盘创建，绑定下棋后的事件
 
-board.create();
-board.toDown = othe.goChess;
-
-document.getElementById("play").onclick = function () {//开始+重新开始
+document.getElementById("play").onclick = function () {	// 开始 + 重新开始
 	document.getElementById("selectbox").style.display = "block";
 };
+
 document.getElementById("ok").onclick = function () {//选择难度，先后手以后，点击确定以后。
 	document.getElementById("selectbox").style.display = "none";
 	var ro = document.getElementById("selectbox").getElementsByTagName("input");
@@ -368,48 +358,11 @@ document.getElementById("ok").onclick = function () {//选择难度，先后手�
 	for (var i = 2; i < ro.length; i++)
 		if (ro[i].checked)
 			break;
-	othe.aiNum = i - 1
-	if (i == 2) {
-		ai6.calculateTime = 20
-		ai6.outcomeDepth = 7
-		othe.play();
-	}
-	else if (i == 3) {
-		ai6.calculateTime = 5000
-		ai6.outcomeDepth = 15
-		othe.play();
-	}
-	else if (i == 4) {
 
-		//ai6.calculateTime = 5000
-		//ai6.outcomeDepth = 15 
-		othe.play();
-	}
-	else if (i == 5) {
-
-		//ai6.calculateTime = 5000
-		//ai6.outcomeDepth = 15 
-		othe.play();
-	}
-	else if (i == 6) {
-
-		//ai6.calculateTime = 5000
-		//ai6.outcomeDepth = 15
-		othe.play();
-	}
-	else if (i == 7) {
-		//ai6.calculateTime = 5000
-		//ai6.outcomeDepth = 15
-		othe.play();
-	}
-	else if (i == 8) {
-		//ai6.calculateTime = 5000
-		//ai6.outcomeDepth = 15 
-		othe.play();
-	}
-
-
-
+	othe.aiNum = i - 1;		// 不太清楚这是什么
+	ai6.calculateTime = 2000;	// 留给 ai 的执行时间
+	ai6.outcomeDepth = 5;		// 搜索深度
+	othe.play();
 };
 document.getElementById("cancel").onclick = function () {//取消
 	document.getElementById("selectbox").style.display = "none";
