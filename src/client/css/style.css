@@ -1,16 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-	<meta name="viewport" content="width=540,user-scalable=no">
-	<meta name="description" content="墨攻棋阵">
-	<meta name="keywords" content="黑白棋, Othello, 游戏, 算法, 人工智能, AI, 人机博弈, im0qianqian, Reversi">
-	<title>墨攻棋阵</title>
-	<style type="text/css">
-		body {
-			background-image: url('./res/img/background.jpg');
+body {
+			background-image: url('../img/background.jpg');
 			font-family: "微软雅黑", "黑体", serif;
 			margin: 0;
 			padding: 0;
@@ -291,45 +280,3 @@
 				display: none;
 			}
 		}
-	</style>
-</head>
-
-<body>
-	<div id="desk">
-		<div id="title">
-			<h1>墨<span>攻</span>棋阵</h1>
-		</div>
-		<div id="interface">
-			<div id="chessboard">
-			</div>
-			<div id="pass"></div>
-			<div id="airuning">AI运算中……</div>
-			<div id="selectbox">
-				<label><input type="radio" name="side" checked="checked"><span>玩家先走</span></label>
-				<label><input type="radio" name="side"><span>电脑先走</span></label><br>
-				<div id="buttons">
-					<div id="ok" class="button">确定</div>
-					<div id="cancel" class="button">取消</div>
-				</div>
-			</div>
-		</div>
-		<div id="console">
-			<div id="side1" class="cbox">
-				<span>0</span>
-				<div class="black" style="margin: 5%;"></div>
-			</div>
-			<div id="side2" class="cbox">
-				<span>0</span>
-				<div class="white" style="margin: 5%;"></div>
-			</div>
-			<div id="play" class="button">开始</div>
-			<div id="back" class="button">悔棋</div>
-			<div id="no3d" class="button">3D</div>
-			<div id="explain" class="button">说明</div>
-		</div>
-	</div>
-	<script type="text/javascript" src="./AI6.js"></script>
-	<script type="text/javascript" src="./ocjs.js"></script>
-</body>
-
-</html>
