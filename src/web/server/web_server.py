@@ -1,5 +1,5 @@
 import socket
-from .exec_request import ReversiExecServer
+from src.web.server.exec_request import ReversiExecServer
 
 
 class ReversiWebServer(object):
@@ -11,9 +11,9 @@ class ReversiWebServer(object):
         self.http_host = http_host
 
     def listen(self):
+        listen_socket = socket.socket(socket.AF_INET,
+                                      socket.SOCK_STREAM)  # 使用 TCP 连接
         try:
-            listen_socket = socket.socket(socket.AF_INET,
-                                          socket.SOCK_STREAM)  # 使用 TCP 连接
             listen_socket.bind(self.http_host)
             listen_socket.listen()
 
@@ -29,3 +29,8 @@ class ReversiWebServer(object):
         except Exception as e:
             listen_socket.close()
             print(e)
+
+
+if __name__ == '__main__':
+    server = ReversiWebServer()
+    server.listen()

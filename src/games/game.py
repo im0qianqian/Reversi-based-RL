@@ -6,11 +6,11 @@ class Game():
     """
 
     def init(self):
-        "游戏状态初始化"
+        """游戏状态初始化"""
         pass
 
     def display(self, board=None):
-        "打印当前游戏状态（棋盘）"
+        """打印当前游戏状态（棋盘）"""
         pass
 
     def get_winner(self, board=None):
@@ -27,7 +27,7 @@ class Game():
         pass
 
     def get_current_state(self, board=None):
-        "获取当前棋盘状态"
+        """获取当前棋盘状态"""
         pass
 
     def get_next_state(self, player, action, board=None):

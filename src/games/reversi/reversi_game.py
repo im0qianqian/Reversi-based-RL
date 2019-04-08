@@ -1,6 +1,6 @@
 import numpy as np
 from src.games.game import Game
-from src.games.reversi.reversi_board import ReversiBoard
+from src.games.reversi.reversi_logic import ReversiLogic
 
 
 class ReversiGame(Game):
@@ -10,53 +10,60 @@ class ReversiGame(Game):
 
     def __init__(self, n=8):
         self.n = n  # 棋盘大小 n*n
-        self.board = ReversiBoard(self.n)
+        self.logic = ReversiLogic(self.n)
 
-    def init(self):
-        pass
+    def init(self, board=None):
+        """使用棋盘矩阵初始化"""
+        self.logic.set_pieces(board)
 
     def display(self, board=None):
-        self.board.set_pieces(board)
-        self.board.display()
+        """打印当前棋盘状态"""
+        self.logic.set_pieces(board)
+        self.logic.display()
 
     def get_winner(self, board=None):
-        self.board.set_pieces(board)
-        if len(self.board.get_legal_moves(1)):
+        """获取游戏是否结束等"""
+        self.logic.set_pieces(board)
+        if len(self.logic.get_legal_moves(1)):  # 玩家 1 可走
             return 0
-        if len(self.board.get_legal_moves(-1)):
+        if len(self.logic.get_legal_moves(-1)):  # 玩家 -1 可走
             return 0
-        if self.board.count(1) > self.board.count(-1):
+        if self.logic.count(1) > self.logic.count(-1):  # 比较两个玩家判断哪个赢
             return 1
         return -1
 
     def get_current_state(self, board=None):
-        self.board.set_pieces(board)
-        return self.board.pieces
+        """获取当前棋盘状态"""
+        self.logic.set_pieces(board)
+        return self.logic.pieces
 
     def get_legal_moves(self, player, board=None):
-        self.board.set_pieces(board)
-        legal_moves = self.board.get_legal_moves(player)
-        res = np.zeros(self.board.pieces.shape, dtype=np.int)
+        """获取行动力矩阵"""
+        self.logic.set_pieces(board)
+        legal_moves = self.logic.get_legal_moves(player)
+        res = np.zeros(self.logic.pieces.shape, dtype=np.int)
         for x, y in legal_moves:
             res[x][y] = 1
         return res
 
     def get_next_state(self, player, action, board=None):
-        self.board.set_pieces(board)
-        if action < 0 or action >= self.n * self.n:
-            return (self.board, -player)
-        self.board.execute_move((action // self.n, action % self.n), player)
-        return (self.board.pieces, -player)
+        """玩家 player 执行 action 后的棋盘状态"""
+        self.logic.set_pieces(board)
+        if 0 <= action < self.n * self.n:
+            self.logic.execute_move((action // self.n, action % self.n), player)
+        return self.logic.pieces, -player
 
 
 if __name__ == "__main__":
     a = ReversiGame(8)
-    player = 1
-    while True:
-        a.display()
-        print(a.board.get_legal_moves(player))
-        x, y = map(int, input().split())
-        tmp, player = a.get_next_state(player, x * 8 + y)
-        pass
+    b = a.get_legal_moves(1)
+    print(b.reshape(1, -1))
+    # player = 1
+    # while True:
+    #     a.display()
+    #     print(a.board.get_legal_moves(player))
+    #     x, y = map(int, input().split())
+    #     tmp, player = a.get_next_state(player, x * 8 + y)
+    #     pass
     # print(a.get_legal_moves(1))
     # a.display()

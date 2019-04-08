@@ -13,5 +13,5 @@ def create_parser():
 
 
 if __name__ == "__main__":
-    args = create_parser()
+    # args = create_parser()
     pass

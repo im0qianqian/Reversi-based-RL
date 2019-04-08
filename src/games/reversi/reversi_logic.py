@@ -63,20 +63,20 @@ class ReversiLogic():
             print(x, '', end=" ")  # prints 'a', 'b', etc.
         print("")
         print("   " + "-" * 3 * self.n)
-        for y in range(self.n):
-            print(y, "|", end=" ")  # print the row #
-            for x in range(self.n):
+        for x in range(self.n):
+            print(x, "|", end=" ")  # print the row #
+            for y in range(self.n):
                 piece = self[x][y]  # get the piece to print
                 if piece == -1:
-                    print("● ", end=" ")
+                    print("● ", end="" if y == self.n - 1 else " ")
                 elif piece == 1:
-                    print("○ ", end=" ")
+                    print("○ ", end="" if y == self.n - 1 else " ")
                 else:
-                    print("-" if x == self.n - 1 else "- ", end=" ")
+                    print("-" if y == self.n - 1 else "- ", end=" ")
             # Display the # of pieces for each color to the right of the board
-            if y == self.n // 2:
+            if x == self.n // 2:
                 print("|  ○: " + str(self.count(1)))
-            elif y == self.n // 2 - 1:
+            elif x == self.n // 2 - 1:
                 print("|  ●: " + str(self.count(-1)))
             else:
                 print("|")
@@ -167,8 +167,11 @@ class ReversiLogic():
         flips = []
 
         for x, y in ReversiLogic._increment_move(origin, direction, self.n):
-            if self[x][y] == 0 and flips:
-                return (x, y)
+            if self[x][y] == 0:
+                if flips:
+                    return x, y
+                else:
+                    return None
             elif self[x][y] == color:
                 return None
             elif self[x][y] == -color:
@@ -177,13 +180,15 @@ class ReversiLogic():
     def _get_flips(self, origin, direction, color):
         """ Gets the list of flips for a vertex and direction to use with the
         execute_move function """
-        # initialize variables
+        # initialize variables modify by im0qianqian
         flips = [origin]
 
         for x, y in ReversiLogic._increment_move(origin, direction, self.n):
-            if self[x][y] == -color:
+            if self[x][y] == 0:
+                return []
+            elif self[x][y] == -color:
                 flips.append((x, y))
-            elif self[x][y] == color and len(flips) > 1:
+            elif self[x][y] == color:
                 return flips
 
         return []
