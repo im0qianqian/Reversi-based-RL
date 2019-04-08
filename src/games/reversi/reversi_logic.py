@@ -24,15 +24,14 @@ Support for python3.
 import numpy as np
 
 
-class ReversiBoard():
-
+class ReversiLogic():
     # list of all 8 directions on the board, as (x,y) offsets
     __directions = [(1, 1), (1, 0), (1, -1), (0, -1), (-1, -1), (-1, 0), (-1,
                                                                           1),
                     (0, 1)]
 
     def __init__(self, n):
-        "Set up initial board configuration."
+        """Set up initial board configuration."""
 
         # Board Size n * n
         self.n = n
@@ -51,12 +50,12 @@ class ReversiBoard():
         return self.pieces[index]
 
     def set_pieces(self, pieces=None):
-        "set pieces, if pieces is None, then do nothing. by im0qianqian"
+        """set pieces, if pieces is None, then do nothing. by im0qianqian"""
         if pieces is not None:
             np.copyto(self.pieces, pieces)
 
     def display(self):
-        "Display the board."
+        """Display the board."""
 
         # print the column labels as letters on the bottom of the board
         print("   ", end=" ")
@@ -68,8 +67,10 @@ class ReversiBoard():
             print(y, "|", end=" ")  # print the row #
             for x in range(self.n):
                 piece = self[x][y]  # get the piece to print
-                if piece == -1: print("● ", end=" ")
-                elif piece == 1: print("○ ", end=" ")
+                if piece == -1:
+                    print("● ", end=" ")
+                elif piece == 1:
+                    print("○ ", end=" ")
                 else:
                     print("-" if x == self.n - 1 else "- ", end=" ")
             # Display the # of pieces for each color to the right of the board
@@ -148,8 +149,8 @@ class ReversiBoard():
         color gives the color pf the piece to play (1=white,-1=black)
         """
 
-        #Much like move generation, start at the new piece's square and
-        #follow it on all 8 directions to look for a piece allowing flipping.
+        # Much like move generation, start at the new piece's square and
+        # follow it on all 8 directions to look for a piece allowing flipping.
 
         # Add the piece to the empty square.
         flips = (flip for direction in self.__directions
@@ -165,7 +166,7 @@ class ReversiBoard():
         color = self[x][y]
         flips = []
 
-        for x, y in ReversiBoard._increment_move(origin, direction, self.n):
+        for x, y in ReversiLogic._increment_move(origin, direction, self.n):
             if self[x][y] == 0 and flips:
                 return (x, y)
             elif self[x][y] == color:
@@ -176,10 +177,10 @@ class ReversiBoard():
     def _get_flips(self, origin, direction, color):
         """ Gets the list of flips for a vertex and direction to use with the
         execute_move function """
-        #initialize variables
+        # initialize variables
         flips = [origin]
 
-        for x, y in ReversiBoard._increment_move(origin, direction, self.n):
+        for x, y in ReversiLogic._increment_move(origin, direction, self.n):
             if self[x][y] == -color:
                 flips.append((x, y))
             elif self[x][y] == color and len(flips) > 1:
@@ -225,7 +226,7 @@ def move_string(move):
 
 
 if __name__ == '__main__':
-    board = ReversiBoard(8)
+    board = ReversiLogic(8)
     board.display()
 
     a = board.get_legal_moves(1)
