@@ -59,7 +59,7 @@ def fetch(matchClass):
                     matches[matchid] = matchClass(matchid, request)
             for i in range(0, result_count):
                 # 结束的对局结果
-                matchid, slot, player_count, *scores = lines[
+                matchid, slot, player_count, scores = lines[
                     request_count * 2 + 1 + i].split(' ')
                 if player_count == "0":
                     print("Match [%s] aborted:\n> I'm player %s" % (matchid,
@@ -72,9 +72,9 @@ def fetch(matchClass):
         except (urllib.error.URLError, urllib.error.HTTPError):
             # 此时可能是长时间没有新的 request 导致连接超时，再试即可
             print(
-                "Error reading from Botzone or timeout, retrying 5 seconds later..."
+                "Error reading from Botzone or timeout, retrying 2 seconds later..."
             )
-            time.sleep(5)
+            time.sleep(2)
             continue
         break
 

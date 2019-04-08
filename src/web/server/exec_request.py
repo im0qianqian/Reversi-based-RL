@@ -17,15 +17,11 @@ class ReversiExecServer(threading.Thread):
                 encoding='utf-8'))
 
     def __pre_exec(self, request):
-        '''
-        预处理请求头
-        '''
+        "预处理请求头"
         return request.strip('\r\n ').split('\n')[-1]
 
     def __exec(self, message):
-        '''
-        处理请求（待填充）
-        '''
+        "处理请求（待填充）"
         return message
 
     def run(self):
