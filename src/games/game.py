@@ -6,11 +6,15 @@ class Game():
     """
 
     def init(self):
-        """游戏状态初始化"""
+        """
+        游戏状态初始化
+        """
         pass
 
     def display(self, board=None):
-        """打印当前游戏状态（棋盘）"""
+        """
+        打印当前游戏状态（棋盘）
+        """
         pass
 
     def get_winner(self, board=None):
@@ -48,5 +52,7 @@ class Game():
         Input:
             player: 当前用户
             board: 棋盘，为 None 代表使用已创建的棋盘
+        Output:
+            一个矩阵，其中为 1 的代表可行坐标
         """
         pass

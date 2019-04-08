@@ -19,7 +19,7 @@ class ReversiRandomPlayer(Player):
         for i in range(self.game.n ** 2):
             if legal_moves_np[i]:
                 legal_moves.append(i)
-        print('legal moves: ', legal_moves)
+        print('legal moves: ', list(map(lambda x: (x // self.game.n, x % self.game.n), legal_moves)))
         if len(legal_moves) == 0:  # 无子可下
             return -1
         return legal_moves[np.random.randint(len(legal_moves))]

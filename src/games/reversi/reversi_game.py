@@ -49,7 +49,7 @@ class ReversiGame(Game):
     def get_next_state(self, player, action, board=None):
         """玩家 player 执行 action 后的棋盘状态"""
         self.logic.set_pieces(board)
-        if 0 <= action < self.n * self.n:
+        if 0 <= action < self.n ** 2:
             self.logic.execute_move((action // self.n, action % self.n), player)
         return self.logic.pieces, -player
 
