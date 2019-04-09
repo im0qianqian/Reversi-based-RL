@@ -60,20 +60,11 @@ class Referee():
 
 if __name__ == "__main__":
     game = ReversiGame(8)
-    # game.init([[1, 0, 1, 1, 0, -1, 0, 0],
-    #            [1, 1, -1, 1, -1, -1, 0, 0],
-    #            [1, 0, -1, 1, 1, -1, 0, 0],
-    #            [0, 0, -1, -1, 1, 1, 0, 0],
-    #            [0, 0, -1, -1, -1, 0, 0, 0],
-    #            [0, 0, 0, 0, 0, -1, -1, 0],
-    #            [0, 0, 0, 0, 0, 0, -1, 0],
-    #            [0, 0, 0, 0, 0, 0, 0, 0]])
-    # game.display()
-    # print(game.get_legal_moves(-1))
-    # game.get_next_state(-1, 4)
-    # game.display()
-    human1 = ReversiRandomPlayer(game, "黑棋")
-    human2 = ReversiBotzonePlayer(game, "白棋")
-    referee = Referee(human1, human2, game)
+
+    randomAI = ReversiRandomPlayer(game)
+    humanAI = ReversiHumanPlayer(game)
+    botzoneAI = ReversiBotzonePlayer(game)
+
+    referee = Referee(randomAI, humanAI, game)
     referee.start_game()
     pass

@@ -2,7 +2,6 @@ import urllib
 import time
 import urllib.request
 import json
-
 from src.games.player import Player
 import numpy as np
 
@@ -180,6 +179,18 @@ class ReversiBotzonePlayer(Player):
 
         # self.fetch(self.SomeKindOfMatch)
         return action if 0 <= action < self.game.n ** 2 else -1
+
+
+class ReversiRLPlayer(Player):
+    """
+    基于强化学习的 AI（正在制作中）
+    """
+
+    def init(self, player_id, referee=None):
+        super().init(player_id, referee)
+
+    def play(self, board=None):
+        super().play(board)
 
 
 if __name__ == "__main__":
