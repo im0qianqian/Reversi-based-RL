@@ -58,14 +58,16 @@ class ReversiBotzonePlayer(Player):
     Connects to Botzone
     """
 
-    def __init__(self, game, player_id, description=""):
-        super().__init__(game, player_id, description)
+    def __init__(self, game, description=""):
+        super().__init__(game, description)
         self.matches = {}
-        self.referee = None
         self.is_finished = False
 
+    def init(self, player_id, referee=None):
+        super().init(player_id, referee)
+        self.matches = {}
+        self.is_finished = False
         self.fetch(self.SomeKindOfMatch)
-        pass
 
     class Match:
         has_request = False

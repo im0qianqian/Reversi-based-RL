@@ -29,6 +29,10 @@ class Referee():
     def start_game(self):
         """开始游戏"""
         current_player = 1
+
+        self.player1.init(current_player, self)  # 先初始化，必须要做
+        self.player2.init(-current_player, self)
+
         player = [self.player2, None, self.player1]
         step = 1  # 行走的步数
         while game.get_winner() == self.game.WinnerState.GAME_RUNNING:
@@ -68,9 +72,8 @@ if __name__ == "__main__":
     # print(game.get_legal_moves(-1))
     # game.get_next_state(-1, 4)
     # game.display()
-    human1 = ReversiRandomPlayer(game, 1, "黑棋")
-    human2 = ReversiBotzonePlayer(game, -1, "白棋")
+    human1 = ReversiRandomPlayer(game, "黑棋")
+    human2 = ReversiBotzonePlayer(game, "白棋")
     referee = Referee(human1, human2, game)
-    human2.referee = referee
     referee.start_game()
     pass
