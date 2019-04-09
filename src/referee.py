@@ -44,6 +44,9 @@ class Referee():
             _, current_player = self.game.get_next_state(current_player, action)
             self.__board.append(_)
             step += 1
+        # 对局结束后双方 AI 各走一步，主要是使某些延迟类 AI 知道此时游戏已经结束了（但还是存在 bug）
+        player[current_player + 1].play()
+        player[-current_player + 1].play()
         self.game.display()
         print("黑棋胜利！" if game.get_winner() == 1 else "白棋胜利！")
 
@@ -62,8 +65,9 @@ if __name__ == "__main__":
     # print(game.get_legal_moves(-1))
     # game.get_next_state(-1, 4)
     # game.display()
-    human1 = ReversiRandomPlayer(game, 1, "黑棋")
-    human2 = ReversiRandomPlayer(game, -1, "白棋")
-    referee = Referee(human1, human2, game)
+    human1 = ReversiRandomPlayer(game, -1, "黑棋")
+    human2 = ReversiBotzonePlayer(game, 1, "白棋")
+    referee = Referee(human2, human1, game)
+    human2.referee = referee
     referee.start_game()
     pass

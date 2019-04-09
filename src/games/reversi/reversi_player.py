@@ -62,6 +62,8 @@ class ReversiBotzonePlayer(Player):
         super().__init__(game, player_id, description)
         self.matches = {}
         self.referee = None
+
+        self.fetch(self.SomeKindOfMatch)
         pass
 
     class Match:
@@ -133,7 +135,6 @@ class ReversiBotzonePlayer(Player):
             break
 
     def play(self, board=None):
-        self.fetch(self.SomeKindOfMatch)
         resp = dict()
         last_action = self.referee.get_last_action()
         for mid, m in self.matches.items():
@@ -157,6 +158,8 @@ class ReversiBotzonePlayer(Player):
             # 使用 m.current_request 模拟一步对局状态，然后产生动作
             botzone_action = json.loads(m.current_request)
             action = int(botzone_action['y']) * self.game.n + int(botzone_action['x'])
+
+        # self.fetch(self.SomeKindOfMatch)
         return action if 0 <= action < self.game.n ** 2 else -1
 
 
