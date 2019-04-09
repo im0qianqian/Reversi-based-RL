@@ -1,4 +1,4 @@
-'''
+"""
 Author: Eric P. Nichols
 Date: Feb 8, 2008.
 
@@ -21,7 +21,7 @@ Date: April 8, 2019.
 1. Support for any n*n size board.
 2. Support for python3.
 3. Fixed some bugs.
-'''
+"""
 import numpy as np
 
 
