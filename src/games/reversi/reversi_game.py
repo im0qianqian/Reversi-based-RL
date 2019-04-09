@@ -24,13 +24,21 @@ class ReversiGame(Game):
     def get_winner(self, board=None):
         """获取游戏是否结束等"""
         self.logic.set_pieces(board)
+
         if len(self.logic.get_legal_moves(1)):  # 玩家 1 可走
-            return 0
+            return self.WinnerState.GAME_RUNNING
         if len(self.logic.get_legal_moves(-1)):  # 玩家 -1 可走
-            return 0
-        if self.logic.count(1) > self.logic.count(-1):  # 比较两个玩家判断哪个赢
-            return 1
-        return -1
+            return self.WinnerState.GAME_RUNNING
+
+        player1_count = self.logic.count(1)  # player1 得分
+        player2_count = self.logic.count(-1)  # player2 得分
+        # 比较两个玩家判断哪个赢
+        if player1_count == player2_count:  # 平局
+            return self.WinnerState.DRAW
+        elif player1_count > player2_count:  # player1 胜利
+            return self.WinnerState.PLAYER1_WIN
+        else:
+            return self.WinnerState.PLAYER2_WIN
 
     def get_current_state(self, board=None):
         """获取当前棋盘状态"""

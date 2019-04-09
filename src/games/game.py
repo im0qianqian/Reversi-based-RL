@@ -1,9 +1,27 @@
+from enum import Enum, unique
+
+
 class Game():
     """
     定义一个游戏类的接口，其他各类游戏可实现它
     适用于：双人对战、回合制游戏，如棋类游戏
     玩家：1 与 -1 代表双方，0 代表空位
     """
+
+    @unique
+    class WinnerState(Enum):
+        """
+        这是一个游戏状态枚举类
+            GAME_RUNNING 游戏未结束
+            PLAYER1_WIN 玩家 1 胜利
+            PLAYER2_WIN 玩家 -1 胜利
+            DRAW        平局
+        """
+        GAME_RUNNING = 0
+        PLAYER1_WIN = 1
+        PLAYER2_WIN = -1
+        DRAW = 2
+        pass
 
     def init(self):
         """
@@ -27,6 +45,7 @@ class Game():
             0 代表游戏未结束
             1 代表玩家 1 赢得比赛
             -1 代表玩家 -1 赢得比赛
+            2 代表平局
         """
         pass
 

@@ -18,8 +18,9 @@ x is the column, y is the row.
 Modify: im0qianqian
 Date: April 8, 2019.
 
-Support for any n*n size board.
-Support for python3.
+1. Support for any n*n size board.
+2. Support for python3.
+3. Fixed some bugs.
 '''
 import numpy as np
 

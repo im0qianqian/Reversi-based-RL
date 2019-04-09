@@ -62,6 +62,7 @@ class ReversiBotzonePlayer(Player):
         super().__init__(game, player_id, description)
         self.matches = {}
         self.referee = None
+        self.is_finished = False
 
         self.fetch(self.SomeKindOfMatch)
         pass
@@ -124,6 +125,7 @@ class ReversiBotzonePlayer(Player):
                         print(
                             "Match [%s] finished:\n> I'm player %s, and the scores are %s"
                             % (matchid, slot, scores))
+                        self.is_finished = True
                     self.matches.pop(matchid)
             except (urllib.error.URLError, urllib.error.HTTPError):
                 # 此时可能是长时间没有新的 request 导致连接超时，再试即可
@@ -133,6 +135,7 @@ class ReversiBotzonePlayer(Player):
                 time.sleep(2)
                 continue
             break
+        return self.is_finished
 
     def play(self, board=None):
         resp = dict()
@@ -151,9 +154,23 @@ class ReversiBotzonePlayer(Player):
             # 将自己的动作存入 m.current_response，同样进行一步模拟
             m.has_response = True
 
-        self.fetch(self.SomeKindOfMatch)
+        if not self.is_finished and self.fetch(self.SomeKindOfMatch):
+            """
+            如果对局已经结束，发生这种情况一般 current_request 没有接收到的下一步，因此我们得自行走最后一步
+            容易证明，如果当前可走，则这一步走完以后游戏必定结束
+              1. 假设我有多于 1 的行动力，且对局已经结束则说明对方无法在该步后做出行动，然而再下一步我依然可以行动，此假设不成立
+              2. 假设我只有 1 的行动力，同上对方无法行动，则该步结束后游戏结束，假设成立
+              3. 假设我无法行动，该步并不会做出任何动作，游戏结束，假设成立
+            """
+            legal_moves_np = self.game.get_legal_moves(self.player_id,
+                                                       board).reshape(-1)  # 获取可行动的位置
+            for i in range(self.game.n ** 2):  # 找到可行动的位置
+                if legal_moves_np[i]:
+                    print("本地最后一次弥补：", (i // self.game.n, i % self.game.n))
+                    return i
 
         action = -1
+
         for mid, m in self.matches.items():
             # 使用 m.current_request 模拟一步对局状态，然后产生动作
             botzone_action = json.loads(m.current_request)
