@@ -29,42 +29,49 @@ class Referee():
     def start_game(self):
         """开始游戏"""
         current_player = 1
+        current_board = self.game.get_current_state()
+
+        # 记录第一步
+        self.__board.append(current_board)
 
         self.player1.init(current_player, self)  # 先初始化，必须要做
         self.player2.init(-current_player, self)
 
         player = [self.player2, None, self.player1]
         step = 1  # 行走的步数
-        while game.get_winner() == self.game.WinnerState.GAME_RUNNING:
-            self.game.display()
-            action = player[current_player + 1].play()
+        while game.get_winner(current_board) == self.game.WinnerState.GAME_RUNNING:
+            self.game.display(current_board)
+            action = player[current_player + 1].play(current_board)
             print("step {} {} --> {}".format(step, player[current_player + 1].description,
                                              (-1, -1) if action == -1 else (
                                                  action // self.game.n, action % self.game.n)))
             self.__action_list.append(action)
             if action != -1:
                 # action == -1 代表无路可走的情况
-                legal_moves = self.game.get_legal_moves(current_player)
+                legal_moves = self.game.get_legal_moves(current_player, current_board)
                 assert legal_moves[action // self.game.n][action % self.game.n] == 1
-            _, current_player = self.game.get_next_state(current_player, action)
-            self.__board.append(_)
+            current_board, current_player = self.game.get_next_state(current_player, action, current_board)
+            self.__board.append(current_board)
             step += 1
         print('---------------------------')
         # 对局结束后双方 AI 各走一步，主要是使某些延迟类 AI 知道此时游戏已经结束了（但还是存在 bug）
-        player[current_player + 1].play()
-        player[-current_player + 1].play()
-        self.game.display()
+        player[current_player + 1].play(current_board)
+        player[-current_player + 1].play(current_board)
+        self.game.display(current_board)
         print(
-            "黑棋胜利！" if game.get_winner() == self.game.WinnerState.PLAYER1_WIN else "白棋胜利！" if game.get_winner() == self.game.WinnerState.PLAYER2_WIN else "平局！")
+            "黑棋胜利！" if game.get_winner(
+                current_board) == self.game.WinnerState.PLAYER1_WIN else "白棋胜利！" if game.get_winner(
+                current_board) == self.game.WinnerState.PLAYER2_WIN else "平局！")
 
 
 if __name__ == "__main__":
     game = ReversiGame(8)
 
-    randomAI = ReversiRandomPlayer(game)
+    randomAI1 = ReversiRandomPlayer(game)
+    randomAI2 = ReversiRandomPlayer(game)
     humanAI = ReversiHumanPlayer(game)
     botzoneAI = ReversiBotzonePlayer(game)
 
-    referee = Referee(randomAI, humanAI, game)
+    referee = Referee(randomAI1, botzoneAI, game)
     referee.start_game()
     pass

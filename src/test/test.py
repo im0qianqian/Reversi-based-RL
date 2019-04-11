@@ -45,6 +45,9 @@ def randplace(board, color):
             if board[i][j] == 0:
                 newBoard = board.copy()
                 if place(newBoard, i, j, color):
+                    # 若可以进角则直接选择
+                    if (i == 0 and j == 0) or (i == 0 and j == 7) or (i == 7 and j == 0) or (i == 7 and j == 7):
+                        return i, j
                     if tot < sum(sum(newBoard)) * color:
                         tot = sum(sum(newBoard)) * color
                         x = i

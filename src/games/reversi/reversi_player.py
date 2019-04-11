@@ -11,7 +11,7 @@ class ReversiRandomPlayer(Player):
     随机AI
     """
 
-    def play(self, board=None):
+    def play(self, board):
         legal_moves_np = self.game.get_legal_moves(self.player_id,
                                                    board).reshape(-1)  # 获取可行动的位置
         legal_moves = []
@@ -29,7 +29,7 @@ class ReversiHumanPlayer(Player):
     人类AI，即手动操作
     """
 
-    def play(self, board=None):
+    def play(self, board):
         legal_moves_np = self.game.get_legal_moves(self.player_id,
                                                    board).reshape(-1)  # 获取可行动的位置
         legal_moves = []
@@ -138,7 +138,7 @@ class ReversiBotzonePlayer(Player):
             break
         return self.is_finished
 
-    def play(self, board=None):
+    def play(self, board):
         resp = dict()
         last_action = self.referee.get_last_action()
         for mid, m in self.matches.items():
@@ -189,7 +189,7 @@ class ReversiRLPlayer(Player):
     def init(self, player_id, referee=None):
         super().init(player_id, referee)
 
-    def play(self, board=None):
+    def play(self, board):
         super().play(board)
 
 
