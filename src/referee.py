@@ -39,7 +39,7 @@ class Referee():
 
         player = [self.player2, None, self.player1]
         step = 1  # 行走的步数
-        while game.get_winner(current_board) == self.game.WinnerState.GAME_RUNNING:
+        while self.game.get_winner(current_board) == self.game.WinnerState.GAME_RUNNING:
             self.game.display(current_board)
             action = player[current_player + 1].play(current_board)
             print("step {} {} --> {}".format(step, player[current_player + 1].description,
@@ -72,6 +72,11 @@ if __name__ == "__main__":
     humanAI = ReversiHumanPlayer(game)
     botzoneAI = ReversiBotzonePlayer(game)
 
-    referee = Referee(randomAI1, botzoneAI, game)
-    referee.start_game()
+    referee = Referee(randomAI1, randomAI2, game)
+
+    time0 = time.time()
+    for i in range(300):
+        referee.start_game()
+    time1 = time.time()
+    print('time: ', time1 - time0)
     pass
