@@ -13,7 +13,7 @@ class ReversiRandomPlayer(Player):
 
     def play(self, board):
         legal_moves_np = self.game.get_legal_moves(self.player_id,
-                                                   board).reshape(-1)  # 获取可行动的位置
+                                                   board)  # 获取可行动的位置
         legal_moves = []
         for i in range(self.game.n ** 2):
             if legal_moves_np[i]:
@@ -31,7 +31,7 @@ class ReversiHumanPlayer(Player):
 
     def play(self, board):
         legal_moves_np = self.game.get_legal_moves(self.player_id,
-                                                   board).reshape(-1)  # 获取可行动的位置
+                                                   board)  # 获取可行动的位置
         legal_moves = []
         for i in range(self.game.n ** 2):
             if legal_moves_np[i]:
@@ -164,7 +164,7 @@ class ReversiBotzonePlayer(Player):
               3. 假设我无法行动，该步并不会做出任何动作，游戏结束，假设成立
             """
             legal_moves_np = self.game.get_legal_moves(self.player_id,
-                                                       board).reshape(-1)  # 获取可行动的位置
+                                                       board)  # 获取可行动的位置
             for i in range(self.game.n ** 2):  # 找到可行动的位置
                 if legal_moves_np[i]:
                     print("本地最后一次弥补：", (i // self.game.n, i % self.game.n))
@@ -186,11 +186,28 @@ class ReversiRLPlayer(Player):
     基于强化学习的 AI（正在制作中）
     """
 
+    def __init__(self, game):
+        super().__init__(game)
+
+        from src.games.reversi.reversi_nnet import NNetWrapper as NNet
+        self.n1 = NNet(self.game)
+        self.n1.load_checkpoint('/home/qianqian/Documents/github/Reversi-based-RL/src/model',
+                                '8x8_100checkpoints_best.pth.tar')
+
     def init(self, player_id, referee=None):
         super().init(player_id, referee)
 
     def play(self, board):
         super().play(board)
+        from src.lib.mcts import MCTS
+
+        mcts1 = MCTS(self.game, self.n1)
+
+        counts = mcts1.get_action_probility(board * self.player_id, temp=1)
+        # print(counts)
+        # print(np.argmax(counts))
+        # input()
+        return np.argmax(counts)
 
 
 if __name__ == "__main__":

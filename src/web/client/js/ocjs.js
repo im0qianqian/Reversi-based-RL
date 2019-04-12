@@ -361,7 +361,7 @@ document.getElementById("ok").onclick = function () {//选择难度，先后手�
 
 	othe.aiNum = i - 1;		// 不太清楚这是什么
 	ai6.calculateTime = 50000;	// 留给 ai 的执行时间
-	ai6.outcomeDepth = 15;		// 搜索深度
+	ai6.outcomeDepth = 10;		// 搜索深度
 	othe.play();
 };
 document.getElementById("cancel").onclick = function () {//取消

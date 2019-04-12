@@ -21,40 +21,61 @@ class MCTS():
         self.Ns = collections.defaultdict(float)  # 状态 s 的出现次数
         self.valid_state = {}  # 某一个状态的可行走法，每个元素是一个 np.ndarray
 
-        pass
+    def get_action_probility(self, relative_board, temp=1):
+        """
+        执行 simulation_count 次模拟，返回每个动作会执行的概率
+
+        temp = 1 代表返回每个动作执行的概率，temp = 0 代表最优动作的执行几率 100%
+        """
+        for i in range(self.args['simulation_count']):
+            self.mcts_search(relative_board)
+
+        state = relative_board.tostring()
+        res = [self.Nsa[(state, action)] if (state, action) in self.Nsa else 0.0 for action in
+               range(self.game.get_action_size())]
+
+        if temp == 0:
+            # 返回的 vector 中最优的动作概率为 1
+            action_probability = [0.0] * self.game.get_action_size()
+            action_probability[int(np.argmax(res))] = 1.0
+            return action_probability
+
+        res_sum = sum(res)
+        eps = 1e-8
+        return res if abs(res_sum) < eps else [probability * 1.0 / res_sum for probability in res]
 
     def mcts_search(self, relative_board):
         """
         一次 MCTS 搜索
         """
-        # 当前状态转化为 str，便于当键
+        # 当前状态转化为 str，便于作键
         state = relative_board.tostring()
 
         # a terminal state, 直接返回结果
         is_win = self.game.get_winner(relative_board)
         if is_win != self.game.WinnerState.GAME_RUNNING:
-            return -is_win
+            return -(1 if is_win == self.game.WinnerState.PLAYER1_WIN else -1)
 
         # 如果当前状态没有出现过
         if state not in self.Ps:
-            # 这里从神经网络中获得预测
-            self.Ps[state], v = self.nnet.predict(state)
+            # 这里从神经网络中获得预测，Ps 只是每种动作执行的可能性，v(s)in [-1,1]
+            self.Ps[state], v = self.nnet.predict(relative_board)
 
-            valid_move = self.game.get_legal_moves(1, relative_board).reshape(-1)
+            valid_move = self.game.get_legal_moves(1, relative_board)
             self.valid_state[state] = valid_move
-
             self.Ps[state] *= valid_move
-            sum_Pss = np.sum(self.Ps[state])
 
-            if sum_Pss > 0:
-                self.Ps[state] /= sum_Pss
+            sum_ps = np.sum(self.Ps[state])
+
+            if sum_ps > 0:
+                self.Ps[state] /= sum_ps
             else:
+                # 这里不太懂，标记下来
                 print("All valid moves were masked, do workaround.")
                 self.Ps[state] += valid_move
                 self.Ps[state] /= np.sum(self.Ps[state])
 
             self.Ns[state] = 0
-            """do somethings"""
             return -v
         else:
             # 如果当前状态已经在搜索树中出现过，这里使用 valid_state 记忆一些信息，避免重复请求
@@ -63,7 +84,7 @@ class MCTS():
             # 初始化两个待求参数
             max_u, best_action = float('-inf'), -1
 
-            for action in range(self.game.n ** 2):
+            for action in range(self.game.get_action_size()):
                 if valid_move[action]:
                     """
                     Q-values 上限

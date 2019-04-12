@@ -57,10 +57,12 @@ class ReversiLogic(object):
         另一种方法是使用 np.copyto 将 pieces 直接拷贝到 self.pieces 中而不用新创建对象，好处是速度快，坏处是代码其他逻辑若修改了 board，可能造成不好的影响
 
         嗯～一般情况下代码其他地方应该不会做修改，所以我们目前采用 copyto，预期浪费空间不如利用起来
+
+        2019.4.12 更改为 np.copy，我天真了
         """
         if pieces is not None:
-            # self.pieces = np.copy(pieces)
-            np.copyto(self.pieces, pieces)
+            self.pieces = np.copy(pieces)
+            # np.copyto(self.pieces, pieces)
 
     def display(self):
         """Display the board."""

@@ -47,9 +47,9 @@ class Referee():
                                                  action // self.game.n, action % self.game.n)))
             self.__action_list.append(action)
             if action != -1:
-                # action == -1 代表无路可走的情况
+                # action == -1 or action == self.n ** 2 代表无路可走的情况
                 legal_moves = self.game.get_legal_moves(current_player, current_board)
-                assert legal_moves[action // self.game.n][action % self.game.n] == 1
+                assert legal_moves[action] == 1
             current_board, current_player = self.game.get_next_state(current_player, action, current_board)
             self.__board.append(current_board)
             step += 1
@@ -71,11 +71,13 @@ if __name__ == "__main__":
     randomAI2 = ReversiRandomPlayer(game)
     humanAI = ReversiHumanPlayer(game)
     botzoneAI = ReversiBotzonePlayer(game)
+    n1p = ReversiRLPlayer(game)
+    n2p = ReversiRLPlayer(game)
 
-    referee = Referee(randomAI1, randomAI2, game)
+    referee = Referee(n1p, n2p, game)
 
     time0 = time.time()
-    for i in range(300):
+    for i in range(1):
         referee.start_game()
     time1 = time.time()
     print('time: ', time1 - time0)

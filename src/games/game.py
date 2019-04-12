@@ -60,6 +60,18 @@ class Game():
         """
         pass
 
+    def get_board_size(self):
+        """
+        获取棋盘大小
+        """
+        pass
+
+    def get_action_size(self):
+        """
+        获取行动状态数
+        """
+        pass
+
     def get_current_state(self):
         """
         获取当前棋盘状态

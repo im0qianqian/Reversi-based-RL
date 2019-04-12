@@ -22,6 +22,13 @@ class ReversiGame(Game):
         self.init(board=board)
         self.logic.display()
 
+    def get_board_size(self):
+        return self.n, self.n
+
+    def get_action_size(self):
+        """获取动作总数，其中 self.n ** 2 为走棋，剩下一个为无路可走"""
+        return self.n ** 2 + 1
+
     def get_winner(self, board):
         """获取游戏是否结束等"""
         self.init(board=board)
@@ -45,9 +52,13 @@ class ReversiGame(Game):
         """获取行动力矩阵"""
         self.init(board=board)
         legal_moves = self.logic.get_legal_moves(player)
-        res = np.zeros(self.logic.pieces.shape, dtype=np.int)
+        res = np.zeros(self.get_action_size(), dtype=np.int)
+
+        if len(legal_moves) == 0:
+            # 无路可走的情况，这里 res[-1] 刚好是 res[self.n ** 2]
+            res[-1] = 1
         for x, y in legal_moves:
-            res[x][y] = 1
+            res[x * self.n + y] = 1
         return res
 
     def get_current_state(self):
