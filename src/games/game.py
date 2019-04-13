@@ -23,19 +23,19 @@ class Game():
         DRAW = 2
         pass
 
-    def init(self):
+    def init(self, board):
         """
         游戏状态初始化
         """
         pass
 
-    def display(self, board=None):
+    def display(self, board):
         """
         打印当前游戏状态（棋盘）
         """
         pass
 
-    def get_winner(self, board=None):
+    def get_winner(self, board):
         """
         游戏是否已经结束
 
@@ -49,11 +49,7 @@ class Game():
         """
         pass
 
-    def get_current_state(self, board=None):
-        """获取当前棋盘状态"""
-        pass
-
-    def get_next_state(self, player, action, board=None):
+    def get_next_state(self, player, action, board):
         """
         获取在action执行完以后的棋盘状态
 
@@ -64,7 +60,34 @@ class Game():
         """
         pass
 
-    def get_legal_moves(self, player, board=None):
+    def get_board_size(self):
+        """
+        获取棋盘大小
+        """
+        pass
+
+    def get_action_size(self):
+        """
+        获取行动状态数
+        """
+        pass
+
+    def get_current_state(self):
+        """
+        获取当前棋盘状态
+        """
+        pass
+
+    def get_relative_state(self, player, board):
+        """
+        获取相对棋盘矩阵
+        :param player: 玩家 id
+        :param board: 传入的棋盘矩阵
+        :return: 相对棋盘矩阵（假设自己 id 为 1 看到的情景）
+        """
+        pass
+
+    def get_legal_moves(self, player, board):
         """
         获取下一步合法的方案
 

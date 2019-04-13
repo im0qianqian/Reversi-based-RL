@@ -22,7 +22,7 @@ class Player():
         self.referee = referee
         pass
 
-    def play(self, board=None):
+    def play(self, board):
         """
         玩家在当前棋盘中走一步
         :param board: 要更新的棋盘

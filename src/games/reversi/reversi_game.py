@@ -12,18 +12,26 @@ class ReversiGame(Game):
         self.n = n  # 棋盘大小 n*n
         self.logic = ReversiLogic(self.n)
 
-    def init(self, board=None):
+    def init(self, board):
         """使用棋盘矩阵初始化"""
         self.logic.set_pieces(board)
+        pass
 
-    def display(self, board=None):
+    def display(self, board):
         """打印当前棋盘状态"""
-        self.logic.set_pieces(board)
+        self.init(board=board)
         self.logic.display()
 
-    def get_winner(self, board=None):
+    def get_board_size(self):
+        return self.n, self.n
+
+    def get_action_size(self):
+        """获取动作总数，其中 self.n ** 2 为走棋，剩下一个为无路可走"""
+        return self.n ** 2 + 1
+
+    def get_winner(self, board):
         """获取游戏是否结束等"""
-        self.logic.set_pieces(board)
+        self.init(board=board)
 
         if len(self.logic.get_legal_moves(1)):  # 玩家 1 可走
             return self.WinnerState.GAME_RUNNING
@@ -40,23 +48,30 @@ class ReversiGame(Game):
         else:
             return self.WinnerState.PLAYER2_WIN
 
-    def get_current_state(self, board=None):
-        """获取当前棋盘状态"""
-        self.logic.set_pieces(board)
-        return self.logic.pieces
-
-    def get_legal_moves(self, player, board=None):
+    def get_legal_moves(self, player, board):
         """获取行动力矩阵"""
-        self.logic.set_pieces(board)
+        self.init(board=board)
         legal_moves = self.logic.get_legal_moves(player)
-        res = np.zeros(self.logic.pieces.shape, dtype=np.int)
+        res = np.zeros(self.get_action_size(), dtype=np.int)
+
+        if len(legal_moves) == 0:
+            # 无路可走的情况，这里 res[-1] 刚好是 res[self.n ** 2]
+            res[-1] = 1
         for x, y in legal_moves:
-            res[x][y] = 1
+            res[x * self.n + y] = 1
         return res
 
-    def get_next_state(self, player, action, board=None):
+    def get_current_state(self):
+        """获取棋盘当前状态"""
+        return self.logic.pieces
+
+    def get_relative_state(self, player, board):
+        """获取相对矩阵"""
+        return player * board
+
+    def get_next_state(self, player, action, board):
         """玩家 player 执行 action 后的棋盘状态"""
-        self.logic.set_pieces(board)
+        self.init(board=board)
         if 0 <= action < self.n ** 2:
             self.logic.execute_move((action // self.n, action % self.n), player)
         return self.logic.pieces, -player

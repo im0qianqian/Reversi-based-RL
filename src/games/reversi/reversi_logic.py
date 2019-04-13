@@ -25,7 +25,7 @@ Date: April 8, 2019.
 import numpy as np
 
 
-class ReversiLogic():
+class ReversiLogic(object):
     # list of all 8 directions on the board, as (x,y) offsets
     __directions = [(1, 1), (1, 0), (1, -1), (0, -1), (-1, -1), (-1, 0), (-1,
                                                                           1),
@@ -51,9 +51,18 @@ class ReversiLogic():
         return self.pieces[index]
 
     def set_pieces(self, pieces=None):
-        """set pieces, if pieces is None, then do nothing. by im0qianqian"""
+        """
+        set pieces, if pieces is None, then do nothing. by im0qianqian
+        这里有两种拷贝方法，第一种是使用 np.copy 创建一个新对象然后将新对象的引用交给 self.pieces，好处是即使中途某处代码修改了 board 也不好影响其他部分运行，坏处是效率低
+        另一种方法是使用 np.copyto 将 pieces 直接拷贝到 self.pieces 中而不用新创建对象，好处是速度快，坏处是代码其他逻辑若修改了 board，可能造成不好的影响
+
+        嗯～一般情况下代码其他地方应该不会做修改，所以我们目前采用 copyto，预期浪费空间不如利用起来
+
+        2019.4.12 更改为 np.copy，我天真了
+        """
         if pieces is not None:
-            np.copyto(self.pieces, pieces)
+            self.pieces = np.copy(pieces)
+            # np.copyto(self.pieces, pieces)
 
     def display(self):
         """Display the board."""
