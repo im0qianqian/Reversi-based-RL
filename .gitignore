@@ -4,6 +4,7 @@
 # Diy by qianqian
 .vscode/
 logs/
+src/test/
 
 # User-specific files
 *.suo
