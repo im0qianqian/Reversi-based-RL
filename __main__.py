@@ -1,34 +1,34 @@
 import json
-import time
+import sys
 from src.games.reversi.reversi_game import ReversiGame
 from src.games.reversi.reversi_player import ReversiRLPlayer
-
-
-def init_board(game):
-    full_input = json.loads(input())
-    requests = full_input["requests"]
-    responses = full_input["responses"]
-    my_color = 1
-    if requests[0]['x'] >= 0:
-        my_color = -1
-        action = requests[0]['x'] * game.n + requests[0]['y']
-        game.get_next_state(-my_color, action, game.get_current_state())
-    turn = len(responses)
-    for i in range(turn):
-        action = responses[i]['x'] * game.n + responses[i]['y']
-        game.get_next_state(my_color, action, game.get_current_state())
-
-        action = requests[i + 1]['x'] * game.n + requests[i + 1]['y']
-        game.get_next_state(-my_color, action, game.get_current_state())
-    return my_color
 
 
 def short_time_mode():
     """
     短时运行模式
     """
+
+    def init_board():
+        full_input = json.loads(input())
+        requests = full_input["requests"]
+        responses = full_input["responses"]
+        color = 1
+        if requests[0]['x'] >= 0:
+            color = -1
+            action_tmp = requests[0]['x'] * game.n + requests[0]['y']
+            game.get_next_state(-color, action_tmp, game.get_current_state())
+        turn = len(responses)
+        for i in range(turn):
+            action_tmp = responses[i]['x'] * game.n + responses[i]['y']
+            game.get_next_state(color, action_tmp, game.get_current_state())
+
+            action_tmp = requests[i + 1]['x'] * game.n + requests[i + 1]['y']
+            game.get_next_state(-color, action_tmp, game.get_current_state())
+        return color
+
     game = ReversiGame(8)
-    my_color = init_board(game)
+    my_color = init_board()
 
     player = ReversiRLPlayer(game, ['data', '8x8_100checkpoints_best.pth.tar'])
     player.init(my_color)
@@ -48,18 +48,19 @@ def long_time_mode():
     """
 
     def get_requests_action(requests):
-        action = -1
+        action_tmp = -1
         if requests['x'] >= 0:
-            action = requests['x'] * game.n + requests['y']
-        return action
+            action_tmp = requests['x'] * game.n + requests['y']
+        return action_tmp
 
-    def put_response(action):
-        if 0 <= action < game.n ** 2:
-            x, y = int(action // game.n), int(action % game.n)
+    def put_response(action_tmp):
+        if 0 <= action_tmp < game.n ** 2:
+            x, y = int(action_tmp // game.n), int(action_tmp % game.n)
         else:
             x, y = -1, -1
         print(json.dumps({"response": {"x": x, "y": y}}))
         print('>>>BOTZONE_REQUEST_KEEP_RUNNING<<<')
+        sys.stdout.flush()
 
     game = ReversiGame(8)
     board = game.get_current_state()
@@ -95,4 +96,5 @@ def long_time_mode():
 
 
 if __name__ == '__main__':
+    # 开启长时运行模式
     long_time_mode()
