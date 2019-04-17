@@ -5,6 +5,7 @@
 .vscode/
 logs/
 src/test/
+data/
 
 # User-specific files
 *.suo

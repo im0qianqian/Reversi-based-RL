@@ -52,7 +52,7 @@
         - [ ] PyTorch NNet
 - [ ] Botzone
     - [x] 本地 AI 配置
-    - [ ] 可参与天梯对局的 AI
+    - [x] 可参与天梯对局的 AI
 
 ---
 

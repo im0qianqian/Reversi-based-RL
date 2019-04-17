@@ -148,8 +148,8 @@ class ReversiBotzonePlayer(Player):
                 resp['x'] = -1
                 resp['y'] = -1
             else:
-                resp['x'] = last_action % self.game.n
-                resp['y'] = last_action // self.game.n
+                resp['x'] = int(last_action % self.game.n)
+                resp['y'] = int(last_action // self.game.n)
 
             m.current_response = json.dumps(resp)
             # 将自己的动作存入 m.current_response，同样进行一步模拟
@@ -186,13 +186,19 @@ class ReversiRLPlayer(Player):
     基于强化学习的 AI（正在制作中）
     """
 
-    def __init__(self, game):
+    def __init__(self, game, check_point=None):
         super().__init__(game)
 
         from src.games.reversi.reversi_nnet import NNetWrapper as NNet
+        import os
         self.n1 = NNet(self.game)
-        self.n1.load_checkpoint('/home/qianqian/Documents/github/Reversi-based-RL/src/model',
-                                '8x8_100checkpoints_best.pth.tar')
+
+        # 临时操作
+        if check_point is None:
+            self.n1.load_checkpoint(os.path.abspath('') + '/model',
+                                    '8x8_100checkpoints_best.pth.tar')
+        else:
+            self.n1.load_checkpoint(check_point[0], check_point[1])
 
     def init(self, player_id, referee=None):
         super().init(player_id, referee)
