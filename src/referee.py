@@ -69,12 +69,14 @@ if __name__ == "__main__":
 
     randomAI1 = ReversiRandomPlayer(game)
     randomAI2 = ReversiRandomPlayer(game)
+    greedyAI1 = ReversiGreedyPlayer(game, greedy_mode=0)
+    greedyAI2 = ReversiGreedyPlayer(game, greedy_mode=1)
     humanAI = ReversiHumanPlayer(game)
     botzoneAI = ReversiBotzonePlayer(game)
-    n1p = ReversiRLPlayer(game)
-    n2p = ReversiRLPlayer(game)
+    n1p = ReversiRLPlayer(game, ['../data', '8x8_100checkpoints_best.pth.tar'])
+    n2p = ReversiRLPlayer(game, ['../data', '8x8_100checkpoints_best.pth.tar'])
 
-    referee = Referee(n1p, n2p, game)
+    referee = Referee(greedyAI1, greedyAI2, game)
 
     time0 = time.time()
     for i in range(1):

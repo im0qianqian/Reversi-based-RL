@@ -44,13 +44,13 @@
     - [x] Human 手动操作
     - [x] 基于随机策略的 AI
     - [x] Botzone 本地 AI 配置（可使用本地 AI 与平台进行对战）
-    - [ ] 基于贪心策略的 AI
+    - [x] 基于贪心策略的 AI
         - 可贪心使得当前转换棋子数量最大
         - 可贪心使得对方行动力最小
     - [ ] **基于深度强化学习的 AI（最重要）**
         - [x] MCTS
         - [ ] PyTorch NNet
-- [ ] Botzone
+- [x] Botzone
     - [x] 本地 AI 配置
     - [x] 可参与天梯对局的 AI
 
@@ -102,3 +102,8 @@ by im0qianqian 2019.04.12
 
 by im0qianqian 2019.04.15
 
+---
+
+坐等今晚天梯上分，哒哒……
+
+by im0qianqian 2019.04.17

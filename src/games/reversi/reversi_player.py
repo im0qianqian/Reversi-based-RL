@@ -24,6 +24,61 @@ class ReversiRandomPlayer(Player):
         return legal_moves[np.random.randint(len(legal_moves))]
 
 
+class ReversiGreedyPlayer(Player):
+    """
+    基于贪心的 AI
+    """
+
+    def __init__(self, game, description="", greedy_mode=0):
+        """
+        greedy mode
+        =0 可贪心使得当前转换棋子数量最大
+        =1 可贪心使得对方行动力最小（哭了哭了，太假了）
+        """
+        super().__init__(game, description)
+        # 贪心策略
+        self.greedy_mode = greedy_mode
+
+    def play(self, board):
+        legal_moves_np = self.game.get_legal_moves(self.player_id,
+                                                   board)  # 获取可行动的位置
+        legal_moves = []
+        for i in range(self.game.n ** 2):
+            if legal_moves_np[i]:
+                legal_moves.append(i)
+        if len(legal_moves) == 0:  # 无子可下
+            return -1
+
+        if self.greedy_mode == 0:
+            # 贪心使得当前转换棋子数量最大
+            action = -1
+            max_greedy = -self.game.n ** 2
+            for i in legal_moves:
+                board_tmp, _ = self.game.get_next_state(self.player_id, i, board)
+                sum_tmp = np.sum(board_tmp) * self.player_id
+                # print((i // self.game.n, i % self.game.n), ' greedy: ', sum_tmp)
+                if max_greedy < sum_tmp:
+                    max_greedy = sum_tmp
+                    action = i
+            # print((action // self.game.n, action % self.game.n), ' max greedy: ', max_greedy)
+            return action
+        else:
+            # 贪心使得对方行动力最小
+            action = -1
+            max_greedy = self.game.n ** 2
+            for i in legal_moves:
+                board_tmp, _ = self.game.get_next_state(self.player_id, i, board)
+                # 对方可移动位置
+                legal_moves_tmp = self.game.get_legal_moves(_, board_tmp)
+                sum_tmp = np.sum(legal_moves_tmp[:-1])
+                # print((i // self.game.n, i % self.game.n), ' greedy: ', sum_tmp)
+                if max_greedy > sum_tmp:
+                    max_greedy = sum_tmp
+                    action = i
+            # print((action // self.game.n, action % self.game.n), ' max greedy: ', max_greedy)
+            return action
+
+
 class ReversiHumanPlayer(Player):
     """
     人类AI，即手动操作
