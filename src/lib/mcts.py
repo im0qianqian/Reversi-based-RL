@@ -2,7 +2,7 @@ import numpy as np
 import collections
 
 
-class MCTS():
+class MCTS(object):
     """
     唔～ 这里是蒙特卡罗树的实现
     """

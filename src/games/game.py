@@ -1,7 +1,7 @@
 from enum import Enum, unique
 
 
-class Game():
+class Game(object):
     """
     定义一个游戏类的接口，其他各类游戏可实现它
     适用于：双人对战、回合制游戏，如棋类游戏

@@ -2,7 +2,7 @@ from src.games.reversi.reversi_player import *
 from src.games.reversi.reversi_game import ReversiGame
 
 
-class Referee():
+class Referee(object):
     """
     这是一个裁判类，指挥游戏的正常运行
     """

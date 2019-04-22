@@ -1,7 +1,7 @@
 from src.games.game import Game
 
 
-class Player():
+class Player(object):
     """
     定义一个玩家类接口
     """
