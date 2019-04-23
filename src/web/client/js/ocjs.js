@@ -148,21 +148,56 @@ function Othello() {
 		}
 	}
 
+	function getFromRLServer() {
+		var request = {};
+		var data = new Array();
+		var result = -1
+		for (var i = 0; i < 8; i++) {
+			data.push(map.slice(i * 8, i * 8 + 8));
+		}
+		request['mode'] = 'board';
+		request['data'] = JSON.stringify(data);
+		request['color'] = map.side;
 
+		// 发送数据
+		$.ajax({
+			type: "POST",
+			url: 'http://localhost:9420',
+			data: JSON.stringify(request),
+			dataType: "json",
+			async: false,
+			timeout: 5000,
+			success: function (data) {
+				if (status == 0) {
+					result = data['response'];
+					console.log('Request data success, message = "' + data['message'] + '", result = (', Math.floor(result / 8), ',', result % 8, ')');
+				} else {
+					console.log('Request data success, but status = 1');
+				}
+			},
+			error: function (data) {
+				alert('ajax error', data);
+			}
+		})
+		return result;
+	}
 
 	function aiRun() {		//电脑走棋
 		if (map.nextNum == 1)	//就一步棋可走了,还搜索什么?
 			oo.go(map.nextIndex[0]);
-		else if (map.space <= 58) {//这个是两步以后就开始使用startSearch来走棋了
+		else {
+			// 从服务器获取下一步的走法，然后走棋
+			oo.go(getFromRLServer());
+			// else if (map.space <= 58) {//这个是两步以后就开始使用startSearch来走棋了
 			//对AI进行设定
-			if (oo.aiNum == 1) {
-				oo.go(ai6.startSearch(map));
-			} else {
-				oo.go(ai6.startSearch(map));
-			}
+			// if (oo.aiNum == 1) {
+			// 	oo.go(ai6.startSearch(map));
+			// } else {
+			// 	oo.go(ai6.startSearch(map));
+			// }
 		}
-		else//前面两步棋都是随机走的
-			oo.go(map.nextIndex[Math.random() * map.nextIndex.length >> 0]);
+		// else//前面两步棋都是随机走的
+		// 	oo.go(map.nextIndex[Math.random() * map.nextIndex.length >> 0]);
 	}
 	// document.getElementById("ai").onclick = aiRun;
 
@@ -360,8 +395,8 @@ document.getElementById("ok").onclick = function () {//选择难度，先后手�
 			break;
 
 	othe.aiNum = i - 1;		// 不太清楚这是什么
-	ai6.calculateTime = 5000;	// 留给 ai 的执行时间
-	ai6.outcomeDepth = 5;		// 搜索深度
+	ai6.calculateTime = 500;	// 留给 ai 的执行时间
+	ai6.outcomeDepth = 10;		// 搜索深度
 	othe.play();
 };
 document.getElementById("cancel").onclick = function () {//取消

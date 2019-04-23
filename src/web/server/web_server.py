@@ -1,5 +1,7 @@
 import socket
 from src.web.server.exec_request import ReversiExecServer
+from src.games.reversi.reversi_game import ReversiGame
+from src.games.reversi.reversi_player import *
 
 
 class ReversiWebServer(object):
@@ -9,6 +11,8 @@ class ReversiWebServer(object):
 
     def __init__(self, http_host=('localhost', 9420)):
         self.http_host = http_host
+        self.game = ReversiGame(8)
+        self.reversi_ai = ReversiRLPlayer(self.game, ['../../../data', '8x8_100checkpoints_best.pth.tar'])
 
     def listen(self):
         listen_socket = socket.socket(socket.AF_INET,
@@ -23,7 +27,7 @@ class ReversiWebServer(object):
             try:
                 while True:
                     client, address = listen_socket.accept()
-                    ReversiExecServer(client, address).start()
+                    ReversiExecServer(client, address, self.reversi_ai).start()
             except Exception as e:
                 print(e)
         except Exception as e:
