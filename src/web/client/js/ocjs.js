@@ -148,10 +148,9 @@ function Othello() {
 		}
 	}
 
-	function getFromRLServer() {
+	function aiRun() {
 		var request = {};
 		var data = new Array();
-		var result = -1
 		for (var i = 0; i < 8; i++) {
 			data.push(map.slice(i * 8, i * 8 + 8));
 		}
@@ -165,11 +164,12 @@ function Othello() {
 			url: 'http://localhost:9420',
 			data: JSON.stringify(request),
 			dataType: "json",
-			async: false,
+			async: true,
 			timeout: 5000,
 			success: function (data) {
 				if (status == 0) {
-					result = data['response'];
+					var result = data['response'];
+					oo.go(result);
 					console.log('Request data success, message = "' + data['message'] + '", result = (', Math.floor(result / 8), ',', result % 8, ')');
 				} else {
 					console.log('Request data success, but status = 1');
@@ -179,26 +179,25 @@ function Othello() {
 				alert('ajax error', data);
 			}
 		})
-		return result;
 	}
 
-	function aiRun() {		//电脑走棋
-		if (map.nextNum == 1)	//就一步棋可走了,还搜索什么?
-			oo.go(map.nextIndex[0]);
-		else {
-			// 从服务器获取下一步的走法，然后走棋
-			oo.go(getFromRLServer());
-			// else if (map.space <= 58) {//这个是两步以后就开始使用startSearch来走棋了
-			//对AI进行设定
-			// if (oo.aiNum == 1) {
-			// 	oo.go(ai6.startSearch(map));
-			// } else {
-			// 	oo.go(ai6.startSearch(map));
-			// }
-		}
-		// else//前面两步棋都是随机走的
-		// 	oo.go(map.nextIndex[Math.random() * map.nextIndex.length >> 0]);
-	}
+	// function aiRun() {		//电脑走棋
+	// 	if (map.nextNum == 1)	//就一步棋可走了,还搜索什么?
+	// 		oo.go(map.nextIndex[0]);
+	// 	else {
+	// 		// 从服务器获取下一步的走法，然后走棋
+	// 		oo.go(getFromRLServer());
+	// 		// else if (map.space <= 58) {//这个是两步以后就开始使用startSearch来走棋了
+	// 		//对AI进行设定
+	// 		// if (oo.aiNum == 1) {
+	// 		// 	oo.go(ai6.startSearch(map));
+	// 		// } else {
+	// 		// 	oo.go(ai6.startSearch(map));
+	// 		// }
+	// 	}
+	// 	// else//前面两步棋都是随机走的
+	// 	// 	oo.go(map.nextIndex[Math.random() * map.nextIndex.length >> 0]);
+	// }
 	// document.getElementById("ai").onclick = aiRun;
 
 	function gameOver() {//终局的时候
