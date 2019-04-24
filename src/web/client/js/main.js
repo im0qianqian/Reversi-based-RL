@@ -45,21 +45,20 @@ function Chessboard() {
 		};
 	}
 
-	oo.update = function (m, nop) {//更新棋盘
+	oo.update = function (map) {//更新显示的棋盘
 		//给入map
 		for (var i = 0; i < 64; i++)
-			pieces[i].className = ["white", "", "black"][m[i] + 1];
-		if (!nop)
-			for (var n in m.next)
-				pieces[n].className = "prompt";
-		for (var i = 0; i < m.newRev.length; i++)
-			pieces[m.newRev[i]].className += " reversal";
-		if (m.newPos != -1)
-			pieces[m.newPos].className += " newest";
-		piecesnum[0].innerHTML = m.black;
-		piecesnum[1].innerHTML = m.white;
-		side[m.side].className = "cbox side";
-		side[-m.side].className = "cbox";
+			pieces[i].className = ["white", "", "black"][map[i] + 1];
+		for (var n in map.next)
+			pieces[n].className = "prompt";
+		for (var i = 0; i < map.newRev.length; i++)
+			pieces[map.newRev[i]].className += " reversal";
+		if (map.newPos != -1)
+			pieces[map.newPos].className += " newest";
+		piecesnum[0].innerHTML = map.black;
+		piecesnum[1].innerHTML = map.white;
+		side[map.side].className = "cbox side";
+		side[-map.side].className = "cbox";
 	}
 }
 
@@ -71,7 +70,6 @@ function Othello() {
 	var map = [];			// 棋局数组
 	var history = [];		// 历史记录,用于悔棋操作
 
-	var zobrist = new Zobrist();
 	oo.aiSide = 0;			// 先行方：1: 电脑为黑棋, -1: 电脑为白棋,  0: 双人对战 2: 电脑自己对战
 
 	var aiRuning = false;	//AI运算中...
@@ -81,8 +79,9 @@ function Othello() {
 	var timer;													// 定时器id：局时
 	oo.play = function () {										// 开始新棋局：所有的数据初始化都在这里，这个是 main
 
-		if (aiRuning)											// 要是ai运行就跳过
+		if (aiRuning) {		// 如果当前有 ai 在执行则跳出
 			return;
+		}
 		clearTimeout(timer);// 清空计时器
 
 		console.clear();		// 清空控制台下信息，用于调试方便
@@ -95,9 +94,9 @@ function Othello() {
 		map.black = map.white = 2;		// 黑白棋子数目
 		map.space = 60;					// 空格数目（64个格子，但是一开始4个是有东西的了）
 
-		map.frontier = [];
+		map.frontier = [];				// 当前棋盘上所有棋子临近的空格子
 		var tk = [18, 19, 20, 21, 26, 29, 34, 37, 42, 43, 44, 45];//用于初始化的暂存数据
-		for (var i = 0; i < 12; i++)
+		for (var i = 0; i < tk.length; i++)
 			map.frontier[tk[i]] = true;
 
 		map.side = 1;		// 当前执棋方（1.黑棋 0.白棋）
@@ -107,7 +106,6 @@ function Othello() {
 		map.next = {};		// 下一步可走棋的反转棋子
 		map.nextNum = 0;	// 下一步可走棋的数目
 		map.prevNum = 0;	// 上一步可走棋的数目
-		map.key = [0, 0];	// 用于置换表的键值
 
 		history = [];       // 历史记录
 
@@ -116,11 +114,12 @@ function Othello() {
 
 
 	function update() {	//每次更新棋盘：判断是否可走，
-		var aiAuto = oo.aiSide == map.side || oo.aiSide == 2;//这个意思是，aiAuto=后面过程（ai方=map当前持方时；或者ai方==2，也就是电脑自己对战时，然后变成true)
+		// 如果 AI 是当前持子方或者是电脑自己对战时为 true
+		var aiAuto = oo.aiSide == map.side || oo.aiSide == 2;
 		oo.findLocation(map);
 		setAIRunStatus(false);//不显示ai在计算
 		setPassStatus(false);//不显示pass
-		board.update(map, aiAuto);//ai下棋：传入map，还有aiAuto函数
+		board.update(map);//ai下棋：传入map，还有aiAuto函数
 		// console.log(map.nextIndex)
 
 		if (map.space == 0 || map.nextNum == 0 && map.prevNum == 0) {//棋盘子满 或 双方都无棋可走
@@ -135,7 +134,6 @@ function Othello() {
 			}, 450);
 			return;
 		}
-
 		if (aiAuto) {//也就是当aiAuto是真的时候开始执行
 			aiRuning = true;//这个是打一个条幅
 			timer = setTimeout(function () {
@@ -167,7 +165,7 @@ function Othello() {
 				if (status == 0) {
 					var result = data['response'];
 					oo.go(result);
-					console.log('Request data success, message = "' + data['message'] + '", result = (', Math.floor(result / 8), ',', result % 8, ')');
+					console.log('Request data success, message = "' + data['message'] + '", result = ', result, ' (', Math.floor(result / 8), ',', result % 8, ')');
 				} else {
 					console.log('Request data success, but status = 1');
 				}
@@ -180,7 +178,6 @@ function Othello() {
 
 
 	function gameOver() {//终局的时候
-		// console.timeEnd("计时器1");
 		setAIRunStatus(false);//不显示ai在计算
 		setPassStatus(false);//不显示pass
 		alert("棋局结束\n\n黑棋: " + map.black + " 子\n白棋: " + map.white + " 子\n\n" + (map.black == map.white ? "平局!!!" : map.black > map.white ? "黑棋胜利!!!" : "白棋胜利!!!"));
@@ -208,21 +205,17 @@ function Othello() {
 		m.nextIndex = [];
 		m.next = [];
 
-		//对AI进行设定
-		var hist = ai6.history[m.side == 1 ? 0 : 1][m.space];
-
-		for (var i = 0; i < 60; i++) {
-			var fi = hist[i];
-			if (!m.frontier[fi])
+		for (var i = 0; i < 64; i++) {
+			if (!m.frontier[i])	// 如果与已有棋子不相邻，则这一点一定不是解
 				continue;
 			var ta = [], la = 0;
 			for (var j = 0; j < 8; j++)
-				is(fi, j);
+				is(i, j);
 			if (la > 0) {
 				if (la != ta.length)
 					ta = ta.slice(0, la);
-				m.next[fi] = ta;
-				m.nextIndex.push(fi);//
+				m.next[i] = ta;		// 存储棋子 i 所能转换的棋子
+				m.nextIndex.push(i);	// 棋子 i 是可行走法
 			}
 		}
 		m.nextNum = m.nextIndex.length;//这个是为了pass使用
@@ -231,7 +224,6 @@ function Othello() {
 	oo.pass = function (m) {//一方无棋可走就pass
 		m.side = -m.side;//下棋方
 		m.prevNum = m.nextNum;//历史记录次序往后一个
-		zobrist.swap(m.key);//调用zobrist函数里面的交换持方的方法
 	}
 
 
@@ -241,10 +233,6 @@ function Othello() {
 
 		var nm = m.slice(0);
 		nm[n] = m.side;
-
-		nm.key = m.key.slice(0);		//复制数组
-		zobrist.set(nm.key, m.side == 1 ? 0 : 1, n);
-
 		nm.frontier = m.frontier.slice(0);		//复制数组
 		nm.frontier[n] = false;
 		for (var i = 0; i < 8; i++) {
@@ -257,7 +245,6 @@ function Othello() {
 		var l = ne.length;
 		for (var i = 0; i < l; i++) {
 			nm[ne[i]] = m.side;		//反转的棋子
-			zobrist.set(nm.key, 2, ne[i]);
 		}
 
 		//下面计算空格数、黑棋数、白棋数
@@ -273,7 +260,6 @@ function Othello() {
 		nm.side = -m.side;
 		nm.prevNum = m.nextNum;
 
-		zobrist.swap(nm.key);//交换持方
 		return nm;
 	}
 
@@ -284,7 +270,6 @@ function Othello() {
 	}
 
 	oo.go = function (n) {	//走棋，n 代表走棋的位置
-
 		aiRuning = false;
 
 		var rev = map.next[n];	// rev 是走这一步翻转的棋子
@@ -292,7 +277,6 @@ function Othello() {
 		map = oo.newMap(map, n);
 		map.newRev = rev;
 		map.newPos = n;
-		// console.log(map.key);
 		update();
 	}
 
@@ -308,8 +292,6 @@ function Othello() {
 		aiRuningObj.style.display = t ? "block" : "none";
 	}
 
-
-
 	function setPassStatus(t) {//设置pass状态：无棋可下就pass
 		passObj.style.display = t ? "block" : "none";
 		if (t) {
@@ -318,38 +300,8 @@ function Othello() {
 	}
 }
 
-function Zobrist() {//Zobrist
-	var oo = this;
-
-	var swapSide = [rnd(), rnd()];
-	var zarr = [[], [], []];
-
-	for (var pn = 0; pn < 64; pn++) {
-		zarr[0][pn] = [rnd(), rnd()];
-		zarr[1][pn] = [rnd(), rnd()];
-		zarr[2][pn] = [zarr[0][pn][0] ^ zarr[1][pn][0], zarr[0][pn][1] ^ zarr[1][pn][1]];// 各位置上翻棋时
-	}
-
-	function rnd() {		//获取32位的随机数
-		return (Math.random() * 0x100000000) >> 0;
-	}
-
-	oo.swap = function (key) {//执棋方轮换
-		key[0] ^= swapSide[0];
-		key[1] ^= swapSide[1];
-	}
-
-	oo.set = function (key, pc, pn) {
-		key[0] ^= zarr[pc][pn][0];
-		key[1] ^= zarr[pc][pn][1];
-	}
-}
-
-
-
 /*main*/
 var board = new Chessboard();	// 创建棋盘对象
-var ai6 = new AI6();			// 创建 AI
 var othe = new Othello();		// 创建逻辑控制对象
 board.create(othe.goChess);		// 棋盘创建，绑定下棋后的事件
 
@@ -357,20 +309,21 @@ document.getElementById("play").onclick = function () {	// 开始 + 重新开始
 	document.getElementById("selectbox").style.display = "block";
 };
 
-document.getElementById("ok").onclick = function () {//选择难度，先后手以后，点击确定以后。
-	document.getElementById("selectbox").style.display = "none";
-	var ro = document.getElementById("selectbox").getElementsByTagName("input");
-
-	othe.aiSide = ro[0].checked ? -1 : 1;//先走方
-
-	for (var i = 2; i < ro.length; i++)
-		if (ro[i].checked)
-			break;
-
-	ai6.calculateTime = 500;	// 留给 ai 的执行时间
-	ai6.outcomeDepth = 10;		// 搜索深度
+document.getElementById("ok").onclick = function () {	// 点击开始 -> 确定后
+	document.getElementById("selectbox").style.display = "none";	// 先隐藏选择框
+	var ro = document.getElementById("selectbox").getElementsByTagName("input");	// 获取选择的内容
+	if (ro[0].checked) {	// 玩家先手
+		othe.aiSide = -1;
+	} else if (ro[1].checked) {	// 电脑先手
+		othe.aiSide = 1;
+	} else if (ro[2].checked) { // 双人模式
+		othe.aiSide = 0;
+	} else {	// 观战模式
+		othe.aiSide = 2;
+	}
 	othe.play();
 };
+
 document.getElementById("cancel").onclick = function () {//取消
 	document.getElementById("selectbox").style.display = "none";
 };

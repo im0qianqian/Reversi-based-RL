@@ -53,6 +53,5 @@ class ReversiExecServer(threading.Thread):
         request = self.client.recv(1024).decode(encoding='utf-8')
         message = self.__pre_exec(request)
         res = self.__exec(message)
-        print('res', res)
         self.__send(res)
         self.client.close()
