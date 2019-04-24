@@ -79,9 +79,6 @@ function Othello() {
 	var passObj = document.getElementById("pass");				// 没有棋下的时候就返回这个
 
 	var timer;													// 定时器id：局时
-
-	var aiNum = 1;												// ai的个数
-
 	oo.play = function () {										// 开始新棋局：所有的数据初始化都在这里，这个是 main
 
 		if (aiRuning)											// 要是ai运行就跳过
@@ -181,24 +178,6 @@ function Othello() {
 		})
 	}
 
-	// function aiRun() {		//电脑走棋
-	// 	if (map.nextNum == 1)	//就一步棋可走了,还搜索什么?
-	// 		oo.go(map.nextIndex[0]);
-	// 	else {
-	// 		// 从服务器获取下一步的走法，然后走棋
-	// 		oo.go(getFromRLServer());
-	// 		// else if (map.space <= 58) {//这个是两步以后就开始使用startSearch来走棋了
-	// 		//对AI进行设定
-	// 		// if (oo.aiNum == 1) {
-	// 		// 	oo.go(ai6.startSearch(map));
-	// 		// } else {
-	// 		// 	oo.go(ai6.startSearch(map));
-	// 		// }
-	// 	}
-	// 	// else//前面两步棋都是随机走的
-	// 	// 	oo.go(map.nextIndex[Math.random() * map.nextIndex.length >> 0]);
-	// }
-	// document.getElementById("ai").onclick = aiRun;
 
 	function gameOver() {//终局的时候
 		// console.timeEnd("计时器1");
@@ -230,12 +209,7 @@ function Othello() {
 		m.next = [];
 
 		//对AI进行设定
-		if (oo.aiNum == 1) {
-			var hist = ai6.history[m.side == 1 ? 0 : 1][m.space];
-		} else {
-			var hist = ai6.history[m.side == 1 ? 0 : 1][m.space];
-		}
-
+		var hist = ai6.history[m.side == 1 ? 0 : 1][m.space];
 
 		for (var i = 0; i < 60; i++) {
 			var fi = hist[i];
@@ -309,11 +283,11 @@ function Othello() {
 		oo.go(n);
 	}
 
-	oo.go = function (n) {	//走棋
+	oo.go = function (n) {	//走棋，n 代表走棋的位置
 
 		aiRuning = false;
 
-		var rev = map.next[n];
+		var rev = map.next[n];	// rev 是走这一步翻转的棋子
 
 		map = oo.newMap(map, n);
 		map.newRev = rev;
@@ -393,7 +367,6 @@ document.getElementById("ok").onclick = function () {//选择难度，先后手�
 		if (ro[i].checked)
 			break;
 
-	othe.aiNum = i - 1;		// 不太清楚这是什么
 	ai6.calculateTime = 500;	// 留给 ai 的执行时间
 	ai6.outcomeDepth = 10;		// 搜索深度
 	othe.play();
