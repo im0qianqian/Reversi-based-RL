@@ -76,7 +76,7 @@ if __name__ == "__main__":
     n1p = ReversiRLPlayer(game, ['../data', '8x8_100checkpoints_best.pth.tar'])
     n2p = ReversiRLPlayer(game, ['../data', '8x8_100checkpoints_best.pth.tar'])
 
-    referee = Referee(n1p, botzoneAI, game)
+    referee = Referee(n1p, n2p, game)
 
     time0 = time.time()
     for i in range(1):

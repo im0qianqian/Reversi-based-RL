@@ -21,10 +21,10 @@ function Chessboard() {
 		td = undefined;
 	}
 
-	oo.create = function (toDown = null) {		//创建棋盘，toDown 为下棋后触发的事件
+	oo.create = function (toDown) {		//创建棋盘，toDown 为下棋后触发的事件
 		oo.toDown = toDown;
 
-		var obj = document.getElementById("chessboard");
+		var obj = document.getElementById("reversi_chessboard");
 		var html = "<table>";//这个地方创建是通过改变html来创建的，使用table创建
 		for (var i = 0; i < 8; i++) {
 			html += "<tr>";
@@ -38,10 +38,10 @@ function Chessboard() {
 		pieces = obj.getElementsByTagName("div");
 		bindEvent(obj.getElementsByTagName("td"));
 
-		piecesnum = document.getElementById("console").getElementsByTagName("span");
+		piecesnum = document.getElementById("reversi_console").getElementsByTagName("span");
 		side = {
-			"1": document.getElementById("side1"),
-			"-1": document.getElementById("side2")
+			"1": document.getElementById("reversi_side1"),
+			"-1": document.getElementById("reversi_side2")
 		};
 	}
 
@@ -73,8 +73,8 @@ function Othello() {
 	oo.aiSide = 0;			// 先行方：1: 电脑为黑棋, -1: 电脑为白棋,  0: 双人对战 2: 电脑自己对战
 
 	var aiRuning = false;	//AI运算中...
-	var aiRuningObj = document.getElementById("airuning");		// 也就是指示出现提示框
-	var passObj = document.getElementById("pass");				// 没有棋下的时候就返回这个
+	var aiRuningObj = document.getElementById("reversi_airuning");		// 也就是指示出现提示框
+	var passObj = document.getElementById("reversi_pass");				// 没有棋下的时候就返回这个
 
 	var timer;													// 定时器id：局时
 	oo.play = function () {										// 开始新棋局：所有的数据初始化都在这里，这个是 main
@@ -171,7 +171,7 @@ function Othello() {
 				}
 			},
 			error: function (data) {
-				alert('ajax error', data);
+				alert('暂未开放AI服务，敬请期待……', data);
 			}
 		})
 	}
@@ -305,13 +305,13 @@ var board = new Chessboard();	// 创建棋盘对象
 var othe = new Othello();		// 创建逻辑控制对象
 board.create(othe.goChess);		// 棋盘创建，绑定下棋后的事件
 
-document.getElementById("play").onclick = function () {	// 开始 + 重新开始
-	document.getElementById("selectbox").style.display = "block";
+document.getElementById("reversi_play").onclick = function () {	// 开始 + 重新开始
+	document.getElementById("reversi_selectbox").style.display = "block";
 };
 
-document.getElementById("ok").onclick = function () {	// 点击开始 -> 确定后
-	document.getElementById("selectbox").style.display = "none";	// 先隐藏选择框
-	var ro = document.getElementById("selectbox").getElementsByTagName("input");	// 获取选择的内容
+document.getElementById("reversi_ok").onclick = function () {	// 点击开始 -> 确定后
+	document.getElementById("reversi_selectbox").style.display = "none";	// 先隐藏选择框
+	var ro = document.getElementById("reversi_selectbox").getElementsByTagName("input");	// 获取选择的内容
 	if (ro[0].checked) {	// 玩家先手
 		othe.aiSide = -1;
 	} else if (ro[1].checked) {	// 电脑先手
@@ -324,20 +324,20 @@ document.getElementById("ok").onclick = function () {	// 点击开始 -> 确定�
 	othe.play();
 };
 
-document.getElementById("cancel").onclick = function () {//取消
-	document.getElementById("selectbox").style.display = "none";
+document.getElementById("reversi_cancel").onclick = function () {//取消
+	document.getElementById("reversi_selectbox").style.display = "none";
 };
 
-document.getElementById("back").onclick = function () {//悔棋
+document.getElementById("reversi_back").onclick = function () {//悔棋
 	othe.historyBack();
 };
 
-document.getElementById("explain").onclick = function () {//最下面解释的弹窗控件
+document.getElementById("reversi_explain").onclick = function () {//最下面解释的弹窗控件
 	alert("nothing");
 };
 
-document.getElementById("no3d").onclick = function () {//3D棋盘切换
-	var desk = document.getElementById("desk");
-	desk.className = desk.className == "fdd" ? "" : "fdd";
-	this.innerHTML = desk.className == "fdd" ? "2D" : "3D";
+document.getElementById("reversi_no3d").onclick = function () {//3D棋盘切换
+	var desk = document.getElementById("reversi_desk");
+	desk.className = desk.className == "reversi_fdd" ? "" : "reversi_fdd";
+	this.innerHTML = desk.className == "reversi_fdd" ? "2D" : "3D";
 };

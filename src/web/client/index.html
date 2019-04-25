@@ -9,44 +9,43 @@
 	<meta name="keywords" content="黑白棋, Othello, 游戏, 算法, 人工智能, AI, 人机博弈, im0qianqian, Reversi">
 	<title>墨攻棋阵</title>
 	<link rel='stylesheet' href='./css/style.css' type='text/css' media='all' />
-	<script src="https://code.jquery.com/jquery-3.4.0.js"
-		integrity="sha256-DYZMCC8HTC+QDr5QNaIcfR7VSPtcISykd+6eSmBW5qo=" crossorigin="anonymous"></script>
+	<script type='text/javascript' src='https://www.dreamwings.cn/wp-includes/js/jquery/jquery.js?ver=1.12.4'></script>
 </head>
 
 <body>
-	<div id="desk">
+	<div id="reversi_desk">
 		<div id="title">
 			<h1>墨<span>攻</span>棋阵</h1>
 		</div>
-		<div id="interface">
-			<div id="chessboard">
+		<div id="reversi_interface">
+			<div id="reversi_chessboard">
 			</div>
-			<div id="pass"></div>
-			<div id="airuning">AI运算中……</div>
-			<div id="selectbox">
+			<div id="reversi_pass"></div>
+			<div id="reversi_airuning">AI运算中……</div>
+			<div id="reversi_selectbox">
 				<label><input type="radio" name="side" checked="checked"><span>玩家先手</span></label>
 				<label><input type="radio" name="side"><span>电脑先手</span></label><br>
 				<label><input type="radio" name="side"><span>双人模式</span></label>
 				<label><input type="radio" name="side"><span>观战模式</span></label><br>
-				<div id="buttons">
-					<div id="ok" class="button">确定</div>
-					<div id="cancel" class="button">取消</div>
+				<div id="reversi_buttons">
+					<div id="reversi_ok" class="button">确定</div>
+					<div id="reversi_cancel" class="button">取消</div>
 				</div>
 			</div>
 		</div>
-		<div id="console">
-			<div id="side1" class="cbox">
+		<div id="reversi_console">
+			<div id="reversi_side1" class="cbox">
 				<span>0</span>
 				<div class="black" style="margin: 5%;"></div>
 			</div>
-			<div id="side2" class="cbox">
+			<div id="reversi_side2" class="cbox">
 				<span>0</span>
 				<div class="white" style="margin: 5%;"></div>
 			</div>
-			<div id="play" class="button">开始</div>
-			<div id="back" class="button">悔棋</div>
-			<div id="no3d" class="button">3D</div>
-			<div id="explain" class="button">说明</div>
+			<div id="reversi_play" class="button">开始</div>
+			<div id="reversi_back" class="button">悔棋</div>
+			<div id="reversi_no3d" class="button">3D</div>
+			<div id="reversi_explain" class="button">说明</div>
 		</div>
 	</div>
 	<script type="text/javascript" src="./js/main.js"></script>

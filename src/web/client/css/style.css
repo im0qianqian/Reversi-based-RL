@@ -5,24 +5,18 @@ body {
 	padding: 0;
 }
 
-#desk {
+#reversi_desk {
 	width: 750px;
 	margin: 0px auto;
 }
 
-#title {
-			/* float: left;
-			width: 60px;
-			padding: 15px; */
-}
-
-#console {
+#reversi_console {
 	float: left;
 	width: 110px;
 	padding: 10px 0px 0px 10px;
 }
 
-h1 {
+#reversi_desk h1 {
 	margin: 10px 0px;
 	color: black;
 	font-size: 50px;
@@ -31,11 +25,11 @@ h1 {
 	text-shadow: 0px 0px 6px #A33D1B, 0px 7px 3px #754B35;
 }
 
-h1 span {
+#reversi_desk h1 span {
 	color: white;
 }
 
-h3 {
+#reversi_desk h3 {
 	margin: 0px 20px;
 	color: #330000;
 	font-size: 25px;
@@ -44,8 +38,8 @@ h3 {
 	text-shadow: 0px 0px 4px #A33D1B, 0px 5px 2px #754B35;
 }
 
-.button {
-	margin: 15px 0px;
+#reversi_desk .button {
+	margin: 15px 10px;
 	font-size: 20px;
 	width: 100px;
 	line-height: 300%;
@@ -54,30 +48,30 @@ h3 {
 	cursor: pointer;
 }
 
-.button:hover {
+#reversi_desk .button:hover {
 	background: rgba(255, 255, 255, .6);
 	box-shadow: 0px 6px 10px #482915;
 }
 
-.button:active {
+#reversi_desk .button:active {
 	background: rgba(255, 255, 255, .8);
 	box-shadow: 0px 2px 5px #482915;
 	position: relative;
 	top: 2px;
 }
 
-.cbox {
+#reversi_desk .cbox {
 	border: 2px dotted transparent;
 	border-radius: 10px;
 	width: 100px;
 	height: 56px;
 }
 
-.side {
+#reversi_desk .side {
 	border: 2px dotted #cc3333;
 }
 
-.cbox span {
+#reversi_desk .cbox span {
 	float: right;
 	font-size: 30px;
 	line-height: 54px;
@@ -87,12 +81,12 @@ h3 {
 	padding-right: 7px;
 }
 
-#interface {
+#reversi_interface {
 	position: relative;
 	float: left;
 }
 
-#chessboard {
+#reversi_chessboard {
 	margin: 15px 7px;
 	-webkit-transform: perspective(740px) rotateX(0deg);
 	transform: perspective(740px) rotateX(0deg);
@@ -100,28 +94,21 @@ h3 {
 	transition: transform 1s;
 }
 
-#chessboard table {
+#reversi_chessboard table {
 	border-spacing: 2px;
 }
 
-#chessboard td {
+#reversi_chessboard td {
 	width: 70px;
 	height: 70px;
 	border: 1px solid black;
 }
 
-#chessboard td:hover {
+#reversi_chessboard td:hover {
 	border: 1px dotted orange;
 	background-color: rgba(255, 255, 255, .4);
 }
-
-#chessboard .bg0 {
-}
-
-#chessboard .bg1 {
-}
-
-.black,
+#reversi_desk .black,
 		.white {
 	width: 10px;
 	height: 10px;
@@ -131,35 +118,35 @@ h3 {
 	box-shadow: 0px 0px 4px #482915;
 }
 
-.fdd #chessboard {
+.reversi_fdd #reversi_chessboard {
 	-webkit-transform: perspective(800px) rotateX(35deg);
 	transform: perspective(800px) rotateX(35deg);
 }
 
-.fdd td .black,
-		.fdd td .white {
+.reversi_fdd td .black,
+		.reversi_fdd td .white {
 	margin: 0 auto;
 	box-shadow: 0px 4px 4px #482915;
 }
 
-.black {
+#reversi_desk .black {
 	background: black;
 	-webkit-transform: rotateY(0deg);
 	transform: rotateY(0deg);
 }
 
-.white {
+#reversi_desk .white {
 	background: white;
 	-webkit-transform: rotateY(180deg);
 	transform: rotateY(180deg);
 }
 
-.reversal {
+#reversi_desk .reversal {
 	-webkit-transition: -webkit-transform 400ms ease-in-out, background 0ms 200ms;
 	transition: transform 400ms ease-in-out, background 0ms 200ms;
 }
 
-.newest:before,
+#reversi_desk .newest:before,
 		.reversal:before {
 	content: "";
 	display: block;
@@ -168,15 +155,15 @@ h3 {
 	border-radius: 5px;
 }
 
-.newest:before {
+#reversi_desk .newest:before {
 	background: #f00;
 }
 
-.reversal:before {
+#reversi_desk .reversal:before {
 	background: #66c;
 }
 
-.prompt {
+#reversi_desk .prompt {
 	width: 10px;
 	height: 10px;
 	border-radius: 100%;
@@ -185,7 +172,7 @@ h3 {
 	border: 1px solid #c32c1c;
 }
 
-#selectbox {
+#reversi_selectbox {
 	position: absolute;
 	top: 50px;
 	left: 50%;
@@ -202,30 +189,22 @@ h3 {
 	display: none;
 }
 
-#selectbox input:checked+span {
+#reversi_selectbox input:checked+span {
 	color: #990000;
 	text-shadow: 0px 0px 3px #FF9900;
 }
 
-#buttons {
+#reversi_buttons {
 	margin: 0 45px;
 }
 
-#buttons div {
+#reversi_buttons div {
 	float: left;
 	margin: 0px 10px;
 }
 
-#copyright {
-	clear: left;
-	text-align: center;
-	color: #642100;
-	padding: 5px;
-	font-size: 18px;
-}
-
-#pass,
-		#airuning {
+#reversi_pass,
+		#reversi_airuning {
 	position: initial;
 	margin: 0 auto;
 	top: 12px;
@@ -242,12 +221,12 @@ h3 {
 	display: none;
 }
 
-#airuning {
+#reversi_airuning {
 	width: 200px;
 }
 
 @media screen and (max-width: 750px) {
-	#desk {
+	#reversi_desk {
 		width: 540px;
 	}
 
@@ -257,27 +236,27 @@ h3 {
 		text-align: center;
 	}
 
-	#console {
+	#reversi_console {
 		width: 96%;
 		padding: 10px 2%;
 	}
 
-	h1,
+	#reversi_desk h1,
 			h3 {
 		display: inline-block;
 	}
 
-	.cbox {
+	#reversi_desk .cbox {
 		float: left;
 	}
 
-	#console .button {
+	#reversi_console .button {
 		float: left;
 		margin: 0px 5px;
 		width: 90px;
 	}
 
-	#no3d {
+	#reversi_no3d {
 		display: none;
 	}
 }
