@@ -138,12 +138,18 @@ function Othello() {
 			aiRuning = true;//这个是打一个条幅
 			timer = setTimeout(function () {
 				setAIRunStatus(true);//AI开始运行
-				timer = setTimeout(aiRun, 50);//这个地方就是ai走棋了
+				timer = setTimeout(reversiBasedRLAIRun, 50);//这个地方就是ai走棋了
 			}, 400);
 		}
 	}
 
-	function aiRun() {
+	function reversiRandomAIRun() {
+		// 一个随机的 AI，用于测试
+		oo.go(map.nextIndex[Math.floor(Math.random() * map.nextIndex.length)]);
+	}
+
+	function reversiBasedRLAIRun() {
+		// 请求服务器获取基于 RL 的走法
 		var request = {};
 		var data = new Array();
 		for (var i = 0; i < 8; i++) {
