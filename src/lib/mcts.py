@@ -7,13 +7,10 @@ class MCTS(object):
     唔～ 这里是蒙特卡罗树的实现
     """
 
-    def __init__(self, game, nnet):
+    def __init__(self, game, nnet, args):
         self.game = game
         self.nnet = nnet
-        self.args = {
-            'simulation_count': 20,  # MCTS 模拟次数
-            'cpuct': 1,  # 探索程度
-        }
+        self.args = args
 
         self.Qsa = collections.defaultdict(float)  # 在状态 s 时执行动作 a 的期望回报
         self.Nsa = collections.defaultdict(float)  # s -> a 边的出现次数
@@ -27,7 +24,7 @@ class MCTS(object):
 
         temp = 1 代表返回每个动作执行的概率，temp = 0 代表最优动作的执行几率 100%
         """
-        for i in range(self.args['simulation_count']):
+        for i in range(self.args.simulation_count):
             self.mcts_search(relative_board)
 
         state = relative_board.tostring()
@@ -90,7 +87,7 @@ class MCTS(object):
                     Q-values 上限
                     Latex: $U(s,a) = Q(s,a) + c_{puct}\cdot P(s,a)\cdot\frac{\sqrt{\Sigma_b N(s,b)}}{1+N(s,a)}$
                     """
-                    u = self.Qsa[(state, action)] + self.args['cpuct'] * self.Ps[state][action] * self.Ns[
+                    u = self.Qsa[(state, action)] + self.args.cpuct * self.Ps[state][action] * self.Ns[
                         state] ** .5 / (
                                 1.0 + self.Nsa[(state, action)])
 

@@ -4,6 +4,7 @@ import urllib.request
 import json
 from src.games.player import Player
 import numpy as np
+from src.config import *
 
 
 class ReversiRandomPlayer(Player):
@@ -244,7 +245,7 @@ class ReversiRLPlayer(Player):
     def __init__(self, game, check_point=None):
         super().__init__(game)
 
-        from src.games.reversi.reversi_nnet import NNetWrapper as NNet
+        from src.games.reversi.reversi_nnnet import NNetWrapper as NNet
         import os
         self.n1 = NNet(self.game)
 
@@ -262,7 +263,7 @@ class ReversiRLPlayer(Player):
         super().play(board)
         from src.lib.mcts import MCTS
 
-        mcts1 = MCTS(self.game, self.n1)
+        mcts1 = MCTS(self.game, self.n1, default_mcts_args)
 
         counts = mcts1.get_action_probility(board * self.player_id, temp=1)
         # print(counts)
