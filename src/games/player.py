@@ -1,15 +1,17 @@
 from src.games.game import Game
+import numpy as np
 
 
 class Player(object):
     """
-    定义一个玩家类接口
+    定义一个玩家类
     """
 
     def __init__(self, game, description=""):
         self.game = game
         self.description = description
-        self.player_id = None
+        # 默认黑棋
+        self.player_id = 1
         self.referee = None
 
     def init(self, player_id, referee=None):
@@ -24,8 +26,8 @@ class Player(object):
 
     def play(self, board):
         """
-        玩家在当前棋盘中走一步
+        玩家在当前棋盘中走一步及行动概率
         :param board: 要更新的棋盘
-        :return: 下一步的行动位置，-1 代表不行动
+        :return: 下一步的行动位置，-1 代表不行动 + 行动概率
         """
         pass

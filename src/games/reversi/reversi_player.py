@@ -19,10 +19,11 @@ class ReversiRandomPlayer(Player):
         for i in range(self.game.n ** 2):
             if legal_moves_np[i]:
                 legal_moves.append(i)
-        print('legal moves: ', list(map(lambda x: (x // self.game.n, x % self.game.n), legal_moves)))
-        if len(legal_moves) == 0:  # 无子可下
-            return -1
-        return legal_moves[np.random.randint(len(legal_moves))]
+        # print('legal moves: ', list(map(lambda x: (x // self.game.n, x % self.game.n), legal_moves)))
+        action = -1
+        if len(legal_moves) != 0:  # 无子可下
+            action = legal_moves[np.random.randint(len(legal_moves))]
+        return action,  # it's a tuple
 
 
 class ReversiGreedyPlayer(Player):
@@ -47,37 +48,34 @@ class ReversiGreedyPlayer(Player):
         for i in range(self.game.n ** 2):
             if legal_moves_np[i]:
                 legal_moves.append(i)
-        if len(legal_moves) == 0:  # 无子可下
-            return -1
 
-        if self.greedy_mode == 0:
-            # 贪心使得当前转换棋子数量最大
-            action = -1
-            max_greedy = -self.game.n ** 2
-            for i in legal_moves:
-                board_tmp, _ = self.game.get_next_state(self.player_id, i, board)
-                sum_tmp = np.sum(board_tmp) * self.player_id
-                # print((i // self.game.n, i % self.game.n), ' greedy: ', sum_tmp)
-                if max_greedy < sum_tmp:
-                    max_greedy = sum_tmp
-                    action = i
-            # print((action // self.game.n, action % self.game.n), ' max greedy: ', max_greedy)
-            return action
-        else:
-            # 贪心使得对方行动力最小
-            action = -1
-            max_greedy = self.game.n ** 2
-            for i in legal_moves:
-                board_tmp, _ = self.game.get_next_state(self.player_id, i, board)
-                # 对方可移动位置
-                legal_moves_tmp = self.game.get_legal_moves(_, board_tmp)
-                sum_tmp = np.sum(legal_moves_tmp[:-1])
-                # print((i // self.game.n, i % self.game.n), ' greedy: ', sum_tmp)
-                if max_greedy > sum_tmp:
-                    max_greedy = sum_tmp
-                    action = i
-            # print((action // self.game.n, action % self.game.n), ' max greedy: ', max_greedy)
-            return action
+        action = -1
+        if len(legal_moves) != 0:  # 有子可下
+            if self.greedy_mode == 0:
+                # 贪心使得当前转换棋子数量最大
+                max_greedy = -self.game.n ** 2
+                for i in legal_moves:
+                    board_tmp, _ = self.game.get_next_state(self.player_id, i, board)
+                    sum_tmp = np.sum(board_tmp) * self.player_id
+                    # print((i // self.game.n, i % self.game.n), ' greedy: ', sum_tmp)
+                    if max_greedy < sum_tmp:
+                        max_greedy = sum_tmp
+                        action = i
+                # print((action // self.game.n, action % self.game.n), ' max greedy: ', max_greedy)
+            else:
+                # 贪心使得对方行动力最小
+                max_greedy = self.game.n ** 2
+                for i in legal_moves:
+                    board_tmp, _ = self.game.get_next_state(self.player_id, i, board)
+                    # 对方可移动位置
+                    legal_moves_tmp = self.game.get_legal_moves(_, board_tmp)
+                    sum_tmp = np.sum(legal_moves_tmp[:-1])
+                    # print((i // self.game.n, i % self.game.n), ' greedy: ', sum_tmp)
+                    if max_greedy > sum_tmp:
+                        max_greedy = sum_tmp
+                        action = i
+                # print((action // self.game.n, action % self.game.n), ' max greedy: ', max_greedy)
+        return action,  # it's a tuple
 
 
 class ReversiHumanPlayer(Player):
@@ -97,11 +95,11 @@ class ReversiHumanPlayer(Player):
             try:
                 x, y = map(int, input().split())
                 if len(legal_moves) == 0 and x == -1:
-                    return -1
+                    return -1,  # it's a tuple
                 else:
                     action = x * self.game.n + y
                     if legal_moves_np[action]:
-                        return action
+                        return action,  # it's a tuple
                     else:
                         print("error!")
             except Exception as e:
@@ -224,7 +222,7 @@ class ReversiBotzonePlayer(Player):
             for i in range(self.game.n ** 2):  # 找到可行动的位置
                 if legal_moves_np[i]:
                     print("本地最后一次弥补：", (i // self.game.n, i % self.game.n))
-                    return i
+                    return i,  # it's a tuple
 
         action = -1
 
@@ -234,7 +232,7 @@ class ReversiBotzonePlayer(Player):
             action = int(botzone_action['y']) * self.game.n + int(botzone_action['x'])
 
         # self.fetch(self.SomeKindOfMatch)
-        return action if 0 <= action < self.game.n ** 2 else -1
+        return action if 0 <= action < self.game.n ** 2 else -1,  # it's a tuple
 
 
 class ReversiRLPlayer(Player):
@@ -242,12 +240,14 @@ class ReversiRLPlayer(Player):
     基于强化学习的 AI（正在制作中）
     """
 
-    def __init__(self, game, check_point=None):
+    def __init__(self, game, choice_mode=0, check_point=None):
+        """choice_mode 代表 AI 在运行时如何选择走法（0 代表挑选最优点，1 代表按 pi 概率挑选）"""
         super().__init__(game)
 
         from src.games.reversi.reversi_nnnet import NNetWrapper as NNet
         import os
         self.n1 = NNet(self.game)
+        self.choice_mode = choice_mode
 
         # 临时操作
         if check_point is None:
@@ -260,16 +260,24 @@ class ReversiRLPlayer(Player):
         super().init(player_id, referee)
 
     def play(self, board):
-        super().play(board)
         from src.lib.mcts import MCTS
 
         mcts1 = MCTS(self.game, self.n1, default_mcts_args)
 
         counts = mcts1.get_action_probility(board * self.player_id, temp=1)
-        # print(counts)
-        # print(np.argmax(counts))
-        # input()
-        return np.argmax(counts)
+
+        action = -1
+        if self.choice_mode == 0:
+            # 以预测胜率最大的点为下一步行动点
+            action = np.argmax(counts)
+        else:
+            # 按预测胜率为分布进行挑选
+            try:
+                action = np.random.choice(len(counts), p=counts)
+            except Exception as e:
+                print('Error: ', e)
+                action = -1
+        return action, counts  # it's a tuple
 
 
 if __name__ == "__main__":

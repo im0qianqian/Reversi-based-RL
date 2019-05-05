@@ -12,10 +12,13 @@ class ReversiGame(Game):
         self.n = n  # 棋盘大小 n*n
         self.logic = ReversiLogic(self.n)
 
-    def init(self, board):
+    def init(self, board=None):
         """使用棋盘矩阵初始化"""
-        self.logic.set_pieces(board)
-        pass
+        if board is None:
+            self.logic = ReversiLogic(self.n)
+        else:
+            self.logic.set_pieces(board)
+        return self.logic.pieces
 
     def display(self, board):
         """打印当前棋盘状态"""
@@ -76,11 +79,38 @@ class ReversiGame(Game):
             self.logic.execute_move((action // self.n, action % self.n), player)
         return self.logic.pieces, -player
 
+    def get_symmetries(self, board, pi):
+        # pi[:-1] 代表去除最后一个 action
+        pi_board = np.reshape(pi[:-1], self.get_board_size())
+        res = []
+
+        for i in range(4):
+            """注意：这里旋转与翻转 rot90 和 fliplr 都类似于视图，即其所关联的对象内容一改全改"""
+            # 旋转
+            new_board = np.rot90(board, i)
+            new_pi = np.rot90(pi_board, i)
+            res += [(new_board, list(new_pi.ravel()) + [pi[-1]])]
+
+            # 翻转
+            new_board = np.fliplr(new_board)
+            new_pi = np.fliplr(new_pi)
+            res += [(new_board, list(new_pi.ravel()) + [pi[-1]])]
+        return res
+
 
 if __name__ == "__main__":
     a = ReversiGame(8)
-    b = a.get_legal_moves(1)
-    print(b.reshape(1, -1))
+    a.init([[0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, -1, 1, 0, 0, 0],
+            [0, 0, 0, 1, 1, 0, 0, 0],
+            [0, 0, 0, 0, 1, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0]])
+    b = a.get_symmetries(a.get_current_state(), np.zeros(a.get_action_size()))
+    # b = a.get_legal_moves(1)
+    # print(b.reshape(1, -1))
     # player = 1
     # while True:
     #     a.display()

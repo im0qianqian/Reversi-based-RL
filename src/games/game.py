@@ -23,9 +23,9 @@ class Game(object):
         DRAW = 2
         pass
 
-    def init(self, board):
+    def init(self, board=None):
         """
-        游戏状态初始化
+        游戏状态初始化，返回初始化后的棋盘
         """
         pass
 
@@ -84,6 +84,12 @@ class Game(object):
         :param player: 玩家 id
         :param board: 传入的棋盘矩阵
         :return: 相对棋盘矩阵（假设自己 id 为 1 看到的情景）
+        """
+        pass
+
+    def get_symmetries(self, board, pi):
+        """
+        获取 board 旋转以及翻转后的 list 序列 [(board, pi)]
         """
         pass
 
