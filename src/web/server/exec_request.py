@@ -32,11 +32,10 @@ class ReversiExecServer(threading.Thread):
             resp['message'] = "Hello World!"
 
             mode = requests['mode']  # 请求模式（当前棋盘状态/比赛过程序列）
-            self.reversi_ai.player_id = requests['color']  # AI 颜色（黑色 1，白色 -1）
-            data = np.array(json.loads(requests['data']))  # 棋盘数据
+            data = np.array(json.loads(requests['data'])) * requests['color']  # 棋盘数据
 
             if mode == 'board':
-                action = self.reversi_ai.play(data)
+                action = self.reversi_ai.play(data)[0]
                 resp['response'] = int(action)
             else:
                 pass

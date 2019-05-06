@@ -2,6 +2,7 @@ import socket
 from src.web.server.exec_request import ReversiExecServer
 from src.games.reversi.reversi_game import ReversiGame
 from src.games.reversi.reversi_player import *
+from src.games.reversi.reversi_nnet import NNetWrapper as NNet
 
 
 class ReversiWebServer(object):
@@ -12,7 +13,14 @@ class ReversiWebServer(object):
     def __init__(self, http_host=('localhost', 9420)):
         self.http_host = http_host
         self.game = ReversiGame(8)
-        self.reversi_ai = ReversiRLPlayer(self.game, ['../../../data', '8x8_100checkpoints_best.pth.tar'])
+        nnet = NNet(self.game, default_args)
+
+        nnet.nnet.model._make_predict_function()  # 这一句是在使用 keras 时需要在多线程预测之前执行的
+        # self.reversi_ai = ReversiRLPlayer(self.game, choice_mode=0, nnet=nnet, args=default_args,
+        #                                   check_point=['../../../data', '8x8_100checkpoints_best.pth.tar'])
+        self.reversi_ai = ReversiRLPlayer(game=self.game, choice_mode=0, nnet=nnet,
+                                          check_point=['../../../data', 'best.pth.tar'],
+                                          args=default_args)
 
     def listen(self):
         listen_socket = socket.socket(socket.AF_INET,

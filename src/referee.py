@@ -45,13 +45,14 @@ class Referee(object):
         # 记录第一步
         self.__board.append(current_board)
 
-        self.player1.init(current_player, self)  # 先初始化，必须要做
-        self.player2.init(-current_player, self)
+        self.player1.init(referee=self)  # 先初始化，必须要做
+        self.player2.init(referee=self)
 
         player = [self.player2, None, self.player1]
         step = 1  # 行走的步数
         while self.game.get_winner(current_board) == self.game.WinnerState.GAME_RUNNING:
-            action, *prob = player[current_player + 1].play(current_board)  # 返回对 current_board 的走法以及预测行走概率
+            action, *prob = player[current_player + 1].play(
+                self.game.get_relative_state(current_player, current_board))  # 返回对 current_board 的走法以及预测行走概率
             if verbose:
                 self.game.display(current_board)
                 print("step {} {} --> {}".format(step, player[current_player + 1].description,
@@ -112,36 +113,19 @@ class Referee(object):
 if __name__ == "__main__":
     game = ReversiGame(8)
 
-    randomAI1 = ReversiRandomPlayer(game)
-    randomAI2 = ReversiRandomPlayer(game)
+    randomAI = ReversiRandomPlayer(game)
     greedyAI1 = ReversiGreedyPlayer(game, greedy_mode=0)
     greedyAI2 = ReversiGreedyPlayer(game, greedy_mode=1)
     humanAI = ReversiHumanPlayer(game)
     botzoneAI = ReversiBotzonePlayer(game)
-    n1p = ReversiRLPlayer(game=game, choice_mode=1, check_point=['../data', '8x8_100checkpoints_best.pth.tar'])
-    n2p = ReversiRLPlayer(game=game, choice_mode=1, check_point=['../data', '8x8_100checkpoints_best.pth.tar'])
+    # n1p = ReversiRLPlayer(game=game, choice_mode=1, check_point=['../data', '8x8_100checkpoints_best.pth.tar'])
+    n2p = ReversiRLPlayer(game=game, choice_mode=1, check_point=['../data', 'best.pth.tar'])
 
-    # referee = Referee(n1p, n2p, game)
-    #
-    # time0 = time.time()
-    # for i in range(1):
-    #     print(referee.play_game(verbose=False))
-    # time1 = time.time()
-    # print('time: ', time1 - time0)
+    referee = Referee(n2p, n2p, game)
 
-    import multiprocessing
-
-    multiprocessing.freeze_support()
-    pool = multiprocessing.Pool()
-
-    result = []
-    referee = Referee(n1p, greedyAI2, game)
+    print('start ...')
+    time0 = time.time()
     for i in range(1):
-        result.append(pool.apply_async(referee.play_game, args=(True,)))
-    pool.close()  # 关闭进程池，表示不能再往进程池中添加进程，需要在join之前调用
-    pool.join()  # 等待进程池中的所有进程执行完毕
-    print("Sub-process(es) done.")
-
-    for res in result:
-        print(res.get())
-    pass
+        print(referee.play_game(verbose=False))
+    time1 = time.time()
+    print('time: ', time1 - time0)

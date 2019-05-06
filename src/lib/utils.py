@@ -1,7 +1,3 @@
-import keras.backend.tensorflow_backend as KTF
-import tensorflow as tf
-
-
 class DotDict(dict):
     def __getattr__(self, name):
         try:
@@ -11,6 +7,8 @@ class DotDict(dict):
 
 
 def set_gpu_memory_grow():
+    import keras.backend.tensorflow_backend as KTF
+    import tensorflow as tf
     config = tf.ConfigProto()
     config.gpu_options.allow_growth = True
     session = tf.Session(config=config)

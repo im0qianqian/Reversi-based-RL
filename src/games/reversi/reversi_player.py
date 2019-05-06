@@ -13,8 +13,7 @@ class ReversiRandomPlayer(Player):
     """
 
     def play(self, board):
-        legal_moves_np = self.game.get_legal_moves(self.player_id,
-                                                   board)  # 获取可行动的位置
+        legal_moves_np = self.game.get_legal_moves(1, board)  # 获取可行动的位置
         legal_moves = []
         for i in range(self.game.n ** 2):
             if legal_moves_np[i]:
@@ -42,8 +41,7 @@ class ReversiGreedyPlayer(Player):
         self.greedy_mode = greedy_mode
 
     def play(self, board):
-        legal_moves_np = self.game.get_legal_moves(self.player_id,
-                                                   board)  # 获取可行动的位置
+        legal_moves_np = self.game.get_legal_moves(1, board)  # 获取可行动的位置
         legal_moves = []
         for i in range(self.game.n ** 2):
             if legal_moves_np[i]:
@@ -55,8 +53,8 @@ class ReversiGreedyPlayer(Player):
                 # 贪心使得当前转换棋子数量最大
                 max_greedy = -self.game.n ** 2
                 for i in legal_moves:
-                    board_tmp, _ = self.game.get_next_state(self.player_id, i, board)
-                    sum_tmp = np.sum(board_tmp) * self.player_id
+                    board_tmp, _ = self.game.get_next_state(1, i, board)
+                    sum_tmp = np.sum(board_tmp)
                     # print((i // self.game.n, i % self.game.n), ' greedy: ', sum_tmp)
                     if max_greedy < sum_tmp:
                         max_greedy = sum_tmp
@@ -66,7 +64,7 @@ class ReversiGreedyPlayer(Player):
                 # 贪心使得对方行动力最小
                 max_greedy = self.game.n ** 2
                 for i in legal_moves:
-                    board_tmp, _ = self.game.get_next_state(self.player_id, i, board)
+                    board_tmp, _ = self.game.get_next_state(1, i, board)
                     # 对方可移动位置
                     legal_moves_tmp = self.game.get_legal_moves(_, board_tmp)
                     sum_tmp = np.sum(legal_moves_tmp[:-1])
@@ -84,12 +82,12 @@ class ReversiHumanPlayer(Player):
     """
 
     def play(self, board):
-        legal_moves_np = self.game.get_legal_moves(self.player_id,
-                                                   board)  # 获取可行动的位置
+        legal_moves_np = self.game.get_legal_moves(1, board)  # 获取可行动的位置
         legal_moves = []
         for i in range(self.game.n ** 2):
             if legal_moves_np[i]:
                 legal_moves.append((i // self.game.n, i % self.game.n))
+        self.game.display(board)
         print(legal_moves)
         while True:
             try:
@@ -116,8 +114,8 @@ class ReversiBotzonePlayer(Player):
         self.matches = {}
         self.is_finished = False
 
-    def init(self, player_id, referee=None):
-        super().init(player_id, referee)
+    def init(self, referee=None):
+        super().init(referee=referee)
         self.matches = {}
         self.is_finished = False
         self.fetch(self.SomeKindOfMatch)
@@ -217,8 +215,7 @@ class ReversiBotzonePlayer(Player):
               2. 假设我只有 1 的行动力，同上对方无法行动，则该步结束后游戏结束，假设成立
               3. 假设我无法行动，该步并不会做出任何动作，游戏结束，假设成立
             """
-            legal_moves_np = self.game.get_legal_moves(self.player_id,
-                                                       board)  # 获取可行动的位置
+            legal_moves_np = self.game.get_legal_moves(1, board)  # 获取可行动的位置
             for i in range(self.game.n ** 2):  # 找到可行动的位置
                 if legal_moves_np[i]:
                     print("本地最后一次弥补：", (i // self.game.n, i % self.game.n))
@@ -257,11 +254,11 @@ class ReversiRLPlayer(Player):
             print('loading ... checkpoint: ', format(check_point))
             self.n1.load_checkpoint(check_point[0], check_point[1])
 
-    def init(self, player_id, referee=None):
-        super().init(player_id, referee)
+    def init(self, referee=None):
+        super().init(referee)
 
     def play(self, board):
-        counts = self.mcts1.get_action_probility(board * self.player_id, temp=1)
+        counts = self.mcts1.get_action_probility(board, temp=1)
         action = -1
         if self.choice_mode == 0:
             # 以预测胜率最大的点为下一步行动点

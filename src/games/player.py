@@ -11,16 +11,13 @@ class Player(object):
         self.game = game
         self.description = description
         # 默认黑棋
-        self.player_id = 1
         self.referee = None
 
-    def init(self, player_id, referee=None):
+    def init(self, referee=None):
         """
         用来初始化一些参数
-        :param player_id: 黑棋 1 白棋 -1
         :param referee: 指挥者，可从指挥者获取部分信息
         """
-        self.player_id = player_id
         self.referee = referee
         pass
 
