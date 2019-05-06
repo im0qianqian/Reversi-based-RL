@@ -1,6 +1,7 @@
 import os
 import time
 from src.games.nnet_agent import NeuralNetAgent
+from keras.callbacks import TensorBoard
 
 
 class NNetWrapper(NeuralNetAgent):
@@ -18,9 +19,21 @@ class NNetWrapper(NeuralNetAgent):
         input_boards = np.asarray(input_boards)
         target_pis = np.asarray(target_pis)
         target_vs = np.asarray(target_vs)
+
+        tb_call_back = TensorBoard(log_dir='../data/logs',  # log 目录
+                                   histogram_freq=0,
+                                   batch_size=self.args.batch_size,
+                                   write_graph=True,  # 是否存储网络结构图
+                                   write_grads=True,  # 是否可视化梯度直方图
+                                   write_images=True,  # 是否可视化参数
+                                   embeddings_freq=0,
+                                   embeddings_layer_names=None,
+                                   embeddings_metadata=None)
+
         # 使用当前的棋盘作输入，拟合 (可行点的概率，权值)
         self.nnet.model.fit(x=input_boards, y=[target_pis, target_vs], batch_size=self.args.batch_size,
-                            epochs=self.args.epochs)
+                            epochs=self.args.epochs,
+                            callbacks=[tb_call_back])
 
     def predict(self, board):
         """

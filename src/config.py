@@ -12,12 +12,12 @@ default_args = DotDict({
     'num_channels': 512,
 
     'num_iteration': 10,  # 1000,  # 训练迭代次数
-    'num_episode': 8,  # 100,  # 每次迭代执行 num_episode 次模拟对局，最好是 num_self_play_pool 的整数倍
+    'num_episode': 4,  # 100,  # 每次迭代执行 num_episode 次模拟对局，最好是 num_self_play_pool 的整数倍
     # 'temp_threshold': 15,
     'update_threshold': 0.6,  # 更新阈值，超过该值更新神经网络
     'num_iteration_train_examples': 200000,
     # 'numMCTSSims': 25,
-    'num_arena_compare': 8,  # 40,
+    'num_arena_compare': 4,  # 40,
     'num_train_examples_history': 20,
 
     'checkpoint_folder': '../data/',
@@ -26,6 +26,6 @@ default_args = DotDict({
     'train_folder_file': ('../data/', 'train.pth.tar'),
     'best_folder_file': ('../data/', 'best.pth.tar'),
 
-    'num_self_play_pool': 2,
-    'num_test_play_pool': 2,
+    'num_self_play_pool': 1,
+    'num_test_play_pool': 1,
 })
