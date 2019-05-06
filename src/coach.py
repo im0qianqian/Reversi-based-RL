@@ -15,10 +15,10 @@ class Coach(object):
     def __init__(self, game, args):
         self.game = game
         self.args = args
-        self.nnet = NNet(self.game, self.args)
-        self.pnet = NNet(self.game, self.args)
-        self.n_player = ReversiRLPlayer(self.game, choice_mode=0, nnet=self.nnet, args=self.args)
-        self.p_player = ReversiRLPlayer(self.game, choice_mode=0, nnet=self.pnet, args=self.args)
+        # self.nnet = NNet(self.game, self.args)
+        # self.pnet = NNet(self.game, self.args)
+        # self.n_player = ReversiRLPlayer(self.game, choice_mode=0, nnet=self.nnet, args=self.args)
+        # self.p_player = ReversiRLPlayer(self.game, choice_mode=0, nnet=self.pnet, args=self.args)
         self.train_examples_history = deque(maxlen=self.args.num_train_examples_history)
 
     def execute_episode(self, game, player1, player2):
@@ -46,12 +46,13 @@ class Coach(object):
         return train_examples
 
     def async_execute_episode(self, game, args):
-        set_gpu_memory_grow()
+        # set_gpu_memory_grow()
         n_player = ReversiRLPlayer(game, choice_mode=0, check_point=args.load_folder_file, args=args)
         p_player = ReversiRLPlayer(game, choice_mode=0, check_point=args.load_folder_file, args=args)
         # g = game.__class__(8)
         # n_player = ReversiRandomPlayer(g)
         # p_player = ReversiRandomPlayer(g)
+        # return 'Hello'
         return self.execute_episode(g, n_player, p_player)
 
     def start_learn(self):
@@ -93,7 +94,7 @@ class Coach(object):
 
 if __name__ == '__main__':
     # 设置 GPU 按需使用，TEST
-    # set_gpu_memory_grow()
+    set_gpu_memory_grow()
     #
     g = Game(8)
     # nnet = NNet(g, default_args)

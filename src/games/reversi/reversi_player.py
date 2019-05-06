@@ -244,7 +244,8 @@ class ReversiRLPlayer(Player):
         """choice_mode 代表 AI 在运行时如何选择走法（0 代表挑选最优点，1 代表按 pi 概率挑选）"""
         super().__init__(game)
 
-        from src.games.reversi.reversi_nnnet import NNetWrapper as NNet
+        # from src.games.reversi.reversi_nnnet import NNetWrapper as NNet
+        from src.games.reversi.reversi_nnet import NNetWrapper as NNet
         from src.lib.mcts import MCTS
         self.n1 = NNet(self.game, args) if nnet is None else nnet
         self.choice_mode = choice_mode
