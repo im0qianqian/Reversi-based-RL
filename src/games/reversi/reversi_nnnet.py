@@ -54,7 +54,7 @@ class Infinite(object):
 
     def __init__(self, *args, **kwargs):
         self.index = 0
-        self.start_ts = time()
+        self.start_ts = time.time()
         self.avg = 0
         self._ts = self.start_ts
         self._xput = deque(maxlen=self.sma_window)
@@ -305,7 +305,7 @@ class NeuralNet():
 
 
 class NNetWrapper(NeuralNet):
-    def __init__(self, game):
+    def __init__(self, game, args):
         self.nnet = onnet(game, args)
         self.board_x, self.board_y = game.n, game.n
         self.action_size = game.n ** 2 + 1

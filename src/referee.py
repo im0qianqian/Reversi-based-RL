@@ -30,8 +30,15 @@ class Referee(object):
         """获取所有的棋盘序列"""
         return self.__board
 
+    def init(self):
+        self.__board.clear()
+        self.__pi_list.clear()
+        self.__action_list.clear()
+
     def play_game(self, verbose=False):
         """开始游戏"""
+        self.init()
+
         current_player = 1
         current_board = self.game.init()
 
@@ -78,6 +85,7 @@ class Referee(object):
         player2_won = 0
         draws = 0
         for _ in range(num):
+            print('arena compare player1 --> player2, eps: {} / {}'.format(_ + 1, num))
             result = self.play_game(verbose=verbose)
             if result == self.game.WinnerState.DRAW:
                 draws += 1
@@ -89,6 +97,7 @@ class Referee(object):
         # 以下反转两个玩家再进行 num 次
         self.player1, self.player2 = self.player2, self.player1
         for _ in range(num):
+            print('arena compare player2 --> player1, eps: {} / {}'.format(_ + 1, num))
             result = self.play_game(verbose=verbose)
             if result == self.game.WinnerState.DRAW:
                 draws += 1
@@ -112,11 +121,27 @@ if __name__ == "__main__":
     n1p = ReversiRLPlayer(game=game, choice_mode=1, check_point=['../data', '8x8_100checkpoints_best.pth.tar'])
     n2p = ReversiRLPlayer(game=game, choice_mode=1, check_point=['../data', '8x8_100checkpoints_best.pth.tar'])
 
-    referee = Referee(n1p, n2p, game)
+    # referee = Referee(n1p, n2p, game)
+    #
+    # time0 = time.time()
+    # for i in range(1):
+    #     print(referee.play_game(verbose=False))
+    # time1 = time.time()
+    # print('time: ', time1 - time0)
 
-    time0 = time.time()
+    import multiprocessing
+
+    multiprocessing.freeze_support()
+    pool = multiprocessing.Pool()
+
+    result = []
+    referee = Referee(n1p, greedyAI2, game)
     for i in range(1):
-        print(referee.play_game(verbose=False))
-    time1 = time.time()
-    print('time: ', time1 - time0)
+        result.append(pool.apply_async(referee.play_game, args=(True,)))
+    pool.close()  # 关闭进程池，表示不能再往进程池中添加进程，需要在join之前调用
+    pool.join()  # 等待进程池中的所有进程执行完毕
+    print("Sub-process(es) done.")
+
+    for res in result:
+        print(res.get())
     pass

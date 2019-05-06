@@ -240,32 +240,27 @@ class ReversiRLPlayer(Player):
     基于强化学习的 AI（正在制作中）
     """
 
-    def __init__(self, game, choice_mode=0, check_point=None):
+    def __init__(self, game, choice_mode=0, nnet=None, check_point=None, args=default_args):
         """choice_mode 代表 AI 在运行时如何选择走法（0 代表挑选最优点，1 代表按 pi 概率挑选）"""
         super().__init__(game)
 
         from src.games.reversi.reversi_nnnet import NNetWrapper as NNet
-        import os
-        self.n1 = NNet(self.game)
+        from src.lib.mcts import MCTS
+        self.n1 = NNet(self.game, args) if nnet is None else nnet
         self.choice_mode = choice_mode
+        self.args = args
+        self.mcts1 = MCTS(self.game, self.n1, self.args)
 
         # 临时操作
-        if check_point is None:
-            self.n1.load_checkpoint(os.path.abspath('') + '/model',
-                                    '8x8_100checkpoints_best.pth.tar')
-        else:
+        if check_point is not None:
+            print('loading ... checkpoint: ', format(check_point))
             self.n1.load_checkpoint(check_point[0], check_point[1])
 
     def init(self, player_id, referee=None):
         super().init(player_id, referee)
 
     def play(self, board):
-        from src.lib.mcts import MCTS
-
-        mcts1 = MCTS(self.game, self.n1, default_mcts_args)
-
-        counts = mcts1.get_action_probility(board * self.player_id, temp=1)
-
+        counts = self.mcts1.get_action_probility(board * self.player_id, temp=1)
         action = -1
         if self.choice_mode == 0:
             # 以预测胜率最大的点为下一步行动点
@@ -276,7 +271,6 @@ class ReversiRLPlayer(Player):
                 action = np.random.choice(len(counts), p=counts)
             except Exception as e:
                 print('Error: ', e)
-                action = -1
         return action, counts  # it's a tuple
 
 
