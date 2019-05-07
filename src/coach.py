@@ -1,3 +1,6 @@
+import sys
+
+sys.path.extend(['/content/gdrive/My Drive/Reversi-based-RL'])
 from src.referee import Referee
 from src.games.reversi.reversi_game import ReversiGame as Game
 from src.games.reversi.reversi_player import *
@@ -18,10 +21,6 @@ class Coach(object):
     def __init__(self, game, args):
         self.game = game
         self.args = args
-        # self.nnet = NNet(self.game, self.args)
-        # self.pnet = NNet(self.game, self.args)
-        # self.n_player = ReversiRLPlayer(self.game, choice_mode=0, nnet=self.nnet, args=self.args)
-        # self.p_player = ReversiRLPlayer(self.game, choice_mode=0, nnet=self.pnet, args=self.args)
         self.train_examples_history = deque(maxlen=self.args.num_train_examples_history)
 
     def execute_episode(self, game, player1, player2):
@@ -56,7 +55,8 @@ class Coach(object):
             process_episode_num: 该进程执行的次数
         """
         set_gpu_memory_grow()
-        player = ReversiRLPlayer(self.game, choice_mode=1, check_point=self.args.load_folder_file, args=self.args)
+        player = ReversiRLPlayer(self.game, choice_mode=1,
+                                 check_point=[self.args.checkpoint_folder, self.args.best_folder_file], args=self.args)
 
         episode_time = time.time()
         train_examples_tmp = []
@@ -92,10 +92,12 @@ class Coach(object):
         # 显存按需使用
         set_gpu_memory_grow()
         # 加载新模型玩家
-        n_player = ReversiRLPlayer(game=self.game, choice_mode=0, nnet=None, check_point=self.args.train_folder_file,
+        n_player = ReversiRLPlayer(game=self.game, choice_mode=0, nnet=None,
+                                   check_point=[self.args.checkpoint_folder, self.args.train_folder_file],
                                    args=self.args)
         # 加载旧模型玩家
-        p_player = ReversiRLPlayer(game=self.game, choice_mode=0, nnet=None, check_point=self.args.best_folder_file,
+        p_player = ReversiRLPlayer(game=self.game, choice_mode=0, nnet=None,
+                                   check_point=[self.args.checkpoint_folder, self.args.best_folder_file],
                                    args=self.args)
 
         n_wins, p_wins, draws = Referee(n_player, p_player, self.game).play_games(process_test_num, verbose=False)
@@ -131,8 +133,8 @@ class Coach(object):
         else:
             print('accepting new model... copy train_folder_file to best_folder_file')
             # 复制文件 train_folder_file 到 best_folder_file
-            shutil.move(os.path.join(self.args.train_folder_file[0], self.args.train_folder_file[1]),
-                        os.path.join(self.args.best_folder_file[0], self.args.best_folder_file[1]))
+            shutil.move(os.path.join(self.args.checkpoint_folder, self.args.train_folder_file),
+                        os.path.join(self.args.checkpoint_folder, self.args.best_folder_file))
 
     def train_network(self):
         nnet = NNet(self.game, self.args)
@@ -152,29 +154,22 @@ class Coach(object):
             self.train_examples_history.append(self.parallel_self_play())  # 进行 self-play
 
             # 使用得到的数据进行训练（这里单进程进行，使用 Process 可以看到显存被释放了，虽然不懂 tf 有没有在自己维护的内部自动释放）
+            train_start_time = time.time()
             p = multiprocessing.Process(target=self.train_network)
             p.start()
             p.join()
-            # self.train_network()
-            print('------- iteration {} train done! ----------'.format(i))
+            print('------- iteration {} train done! time: {}s ----------'.format(i, time.time() - train_start_time))
 
             self.parallel_self_test_play()
             # 我在这里偷偷的拷贝一份没有人知道吧
-            shutil.copyfile(os.path.join(self.args.best_folder_file[0], self.args.best_folder_file[1]),
+            shutil.copyfile(os.path.join(self.args.checkpoint_folder, self.args.best_folder_file),
                             os.path.join(self.args.checkpoint_folder, 'checkpoint_{}.pth.tar'.format(i)))
             print('------- iteration {} self-play test done! -----------'.format(i))
 
 
 if __name__ == '__main__':
-    import os
-
     os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # 这样就不会有 tensorflow 的 log 了
     multiprocessing.freeze_support()
-    # 设置 GPU 按需使用，TEST
-    # set_gpu_memory_grow()
-    #
     g = Game(8)
     coach = Coach(g, default_args)
     coach.start_learn()
-    # coach.start_learn()
-    # res = coach.parallel_self_play()

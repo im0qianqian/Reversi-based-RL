@@ -119,7 +119,8 @@ if __name__ == "__main__":
     humanAI = ReversiHumanPlayer(game)
     botzoneAI = ReversiBotzonePlayer(game)
     # n1p = ReversiRLPlayer(game=game, choice_mode=1, check_point=['../data', '8x8_100checkpoints_best.pth.tar'])
-    n2p = ReversiRLPlayer(game=game, choice_mode=1, check_point=['../data', 'best.pth.tar'])
+    n2p = ReversiRLPlayer(game=game, choice_mode=1,
+                          check_point=[default_args.checkpoint_folder, default_args.best_folder_file])
 
     referee = Referee(n2p, n2p, game)
 

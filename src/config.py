@@ -1,5 +1,8 @@
 from src.lib.utils import DotDict
 import torch.cuda
+import os
+
+project_root_path = 'C:/Users/qianqian/Documents/GitHub/Reversi-based-RL'
 
 default_args = DotDict({
     'simulation_count': 20,  # MCTS 模拟次数
@@ -11,21 +14,21 @@ default_args = DotDict({
     'cuda': torch.cuda.is_available(),
     'num_channels': 512,
 
-    'num_iteration': 10,  # 1000,  # 训练迭代次数
+    'num_iteration': 2,  # 1000,  # 训练迭代次数
     'num_episode': 4,  # 100,  # 每次迭代执行 num_episode 次模拟对局，最好是 num_self_play_pool 的整数倍
     # 'temp_threshold': 15,
     'update_threshold': 0.6,  # 更新阈值，超过该值更新神经网络
     'num_iteration_train_examples': 200000,
-    # 'numMCTSSims': 25,
-    'num_arena_compare': 4,  # 40,
+    'num_arena_compare': 2,  # 40,
     'num_train_examples_history': 20,
 
-    'checkpoint_folder': '../data/',
+    'checkpoint_folder': os.path.join(project_root_path, './data/'),
     'load_model': True,
-    'load_folder_file': ('../data/', 'best.pth.tar'),
-    'train_folder_file': ('../data/', 'train.pth.tar'),
-    'best_folder_file': ('../data/', 'best.pth.tar'),
+    'train_folder_file': 'train.pth.tar',
+    'best_folder_file': 'best.pth.tar',
 
-    'num_self_play_pool': 1,
-    'num_test_play_pool': 1,
+    'logs_folder': os.path.join(project_root_path, './data/logs/'),
+
+    'num_self_play_pool': 2,
+    'num_test_play_pool': 2,
 })

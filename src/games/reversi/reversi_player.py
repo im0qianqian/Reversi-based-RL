@@ -268,7 +268,8 @@ class ReversiRLPlayer(Player):
             try:
                 action = np.random.choice(len(counts), p=counts)
             except Exception as e:
-                print('Error: ', e)
+                # print('Error: ', e)
+                pass
         return action, counts  # it's a tuple
 
 

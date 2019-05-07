@@ -20,7 +20,7 @@ class NNetWrapper(NeuralNetAgent):
         target_pis = np.asarray(target_pis)
         target_vs = np.asarray(target_vs)
 
-        tb_call_back = TensorBoard(log_dir='../data/logs',  # log 目录
+        tb_call_back = TensorBoard(log_dir=self.args.logs_folder,  # log 目录
                                    histogram_freq=0,
                                    batch_size=self.args.batch_size,
                                    write_graph=True,  # 是否存储网络结构图

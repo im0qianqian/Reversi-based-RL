@@ -3,6 +3,7 @@ from src.web.server.exec_request import ReversiExecServer
 from src.games.reversi.reversi_game import ReversiGame
 from src.games.reversi.reversi_player import *
 from src.games.reversi.reversi_nnet import NNetWrapper as NNet
+from src.config import *
 
 
 class ReversiWebServer(object):
@@ -19,7 +20,7 @@ class ReversiWebServer(object):
         # self.reversi_ai = ReversiRLPlayer(self.game, choice_mode=0, nnet=nnet, args=default_args,
         #                                   check_point=['../../../data', '8x8_100checkpoints_best.pth.tar'])
         self.reversi_ai = ReversiRLPlayer(game=self.game, choice_mode=0, nnet=nnet,
-                                          check_point=['../../../data', 'best.pth.tar'],
+                                          check_point=[default_args.checkpoint_folder, default_args.best_folder_file],
                                           args=default_args)
 
     def listen(self):
