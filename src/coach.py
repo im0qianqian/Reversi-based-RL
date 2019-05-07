@@ -126,7 +126,8 @@ class Coach(object):
             p_wins += p_wins_tmp
             draws += draws_tmp
         print(
-            'Final new/prev wins : {} / {}, draws : {}, time: '.format(n_wins, p_wins, draws, time.time() - start_time))
+            'Final new/prev wins : {} / {}, draws : {}, time: {}'.format(n_wins, p_wins, draws,
+                                                                         time.time() - start_time))
         if n_wins + p_wins == 0 or n_wins * 1.0 / (n_wins + p_wins) < self.args.update_threshold:
             """如果新 model 与旧 model 对局胜率不能超过 update_threshold 则不接受"""
             print('rejecting new model...')  # 这里不执行任何动作
