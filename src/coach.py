@@ -1,6 +1,7 @@
 import sys
 
 sys.path.extend(['/content/gdrive/My Drive/Reversi-based-RL'])
+
 from src.referee import Referee
 from src.games.reversi.reversi_game import ReversiGame as Game
 from src.games.reversi.reversi_player import *
@@ -91,11 +92,11 @@ class Coach(object):
     def async_self_test_play(self, idx, process_test_num):
         # 显存按需使用
         set_gpu_memory_grow()
-        # 加载新模型玩家
+        # 加载新模型玩家（从刚刚训练好的 train_folder_file 加载）
         n_player = ReversiRLPlayer(game=self.game, choice_mode=0, nnet=None,
                                    check_point=[self.args.checkpoint_folder, self.args.train_folder_file],
                                    args=self.args)
-        # 加载旧模型玩家
+        # 加载旧模型玩家（旧的 best_folder_file）
         p_player = ReversiRLPlayer(game=self.game, choice_mode=0, nnet=None,
                                    check_point=[self.args.checkpoint_folder, self.args.best_folder_file],
                                    args=self.args)
@@ -140,13 +141,16 @@ class Coach(object):
     def train_network(self):
         nnet = NNet(self.game, self.args)
         # 从最优模型加载
-        nnet.load_checkpoint(folder=self.args.checkpoint_folder, filename='best.pth.tar')
+        nnet.load_checkpoint(folder=self.args.checkpoint_folder, filename=self.args.best_folder_file)
         train_examples = []
         for e in self.train_examples_history:
             train_examples.extend(e)
+        # 打乱顺序
+        np.random.shuffle(train_examples)
+        # 开始训练
         nnet.train(train_examples)
         # 保存为训练模型
-        nnet.save_checkpoint(folder=self.args.checkpoint_folder, filename='train.pth.tar')
+        nnet.save_checkpoint(folder=self.args.checkpoint_folder, filename=self.args.train_folder_file)
 
     def start_learn(self):
         """学习学习"""
@@ -172,5 +176,6 @@ if __name__ == '__main__':
     os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # 这样就不会有 tensorflow 的 log 了
     multiprocessing.freeze_support()
     g = Game(8)
+    print(default_args)
     coach = Coach(g, default_args)
     coach.start_learn()

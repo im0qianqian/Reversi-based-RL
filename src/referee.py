@@ -86,7 +86,6 @@ class Referee(object):
         player2_won = 0
         draws = 0
         for _ in range(num):
-            print('arena compare player1 --> player2, eps: {} / {}'.format(_ + 1, num))
             result = self.play_game(verbose=verbose)
             if result == self.game.WinnerState.DRAW:
                 draws += 1
@@ -94,11 +93,12 @@ class Referee(object):
                 player1_won += 1
             else:
                 player2_won += 1
+            print('arena compare player1 --> player2, eps: {} / {}, player1_won: {}, player2_won: {}, draws: {}'.format(
+                _ + 1, num, player1_won, player2_won, draws))
 
         # 以下反转两个玩家再进行 num 次
         self.player1, self.player2 = self.player2, self.player1
         for _ in range(num):
-            print('arena compare player2 --> player1, eps: {} / {}'.format(_ + 1, num))
             result = self.play_game(verbose=verbose)
             if result == self.game.WinnerState.DRAW:
                 draws += 1
@@ -106,6 +106,8 @@ class Referee(object):
                 player1_won += 1
             else:
                 player2_won += 1
+            print('arena compare player2 --> player1, eps: {} / {}, player1_won: {}, player2_won: {}, draws: {}'.format(
+                _ + 1, num, player1_won, player2_won, draws))
 
         return player1_won, player2_won, draws
 

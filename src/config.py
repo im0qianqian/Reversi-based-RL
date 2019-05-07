@@ -9,10 +9,13 @@ default_args = DotDict({
     'cpuct': 1,  # MCTS 探索程度
     'lr': 0.001,  # learning rate
     'dropout': 0.3,  # dropout
-    'epochs': 10,
+    'epochs': 10,  # 10,
     'batch_size': 64,
-    'cuda': torch.cuda.is_available(),
+    'model_batch_size': 64,  # 模型 batch_size，可用于 TPU 加速
     'num_channels': 512,
+
+    'use_tpu': False,  # 使用 TPU
+    'cuda': torch.cuda.is_available(),
 
     'num_iteration': 2,  # 1000,  # 训练迭代次数
     'num_episode': 4,  # 100,  # 每次迭代执行 num_episode 次模拟对局，最好是 num_self_play_pool 的整数倍
@@ -29,6 +32,6 @@ default_args = DotDict({
 
     'logs_folder': os.path.join(project_root_path, './data/logs/'),
 
-    'num_self_play_pool': 2,
-    'num_test_play_pool': 2,
+    'num_self_play_pool': 1,
+    'num_test_play_pool': 1,
 })

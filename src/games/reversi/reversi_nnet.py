@@ -1,7 +1,16 @@
 import os
 import time
 from src.games.nnet_agent import NeuralNetAgent
-from keras.callbacks import TensorBoard
+import tensorflow as tf
+from tensorflow.python.keras.layers import *
+from tensorflow.python.keras.models import *
+from tensorflow.python.keras.optimizers import *
+from tensorflow.python.keras.callbacks import TensorBoard
+# from keras.layers import *
+# from keras.models import *
+# from keras.optimizers import *
+# from keras.callbacks import TensorBoard
+import numpy as np
 
 
 class NNetWrapper(NeuralNetAgent):
@@ -20,7 +29,7 @@ class NNetWrapper(NeuralNetAgent):
         target_pis = np.asarray(target_pis)
         target_vs = np.asarray(target_vs)
 
-        tb_call_back = TensorBoard(log_dir=self.args.logs_folder,  # log 目录
+        tb_call_back = TensorBoard(log_dir=os.path.join(self.args.logs_folder, str(time.time())),  # log 目录
                                    histogram_freq=0,
                                    batch_size=self.args.batch_size,
                                    write_graph=True,  # 是否存储网络结构图
@@ -39,11 +48,15 @@ class NNetWrapper(NeuralNetAgent):
         """
         board: np array with board
         """
-        # timing
-        start = time.time()
-
         # preparing input
-        board = board[np.newaxis, :, :]
+        if self.args.use_tpu:
+            # 使用 TPU 时因为有 8 个核心，所以这里的大小必须是 8 的整数倍 QAQ，没找到其他办法
+            tmp = []
+            for i in range(8):
+                tmp.append(board)
+            board = np.array(tmp)
+        else:
+            board = board[np.newaxis, :, :]
 
         # run
         pi, v = self.nnet.model.predict(board)
@@ -58,7 +71,14 @@ class NNetWrapper(NeuralNetAgent):
             os.mkdir(folder)
         else:
             print("Checkpoint Directory exists! ")
+
         self.nnet.model.save_weights(filepath)
+        # if self.args.use_tpu:
+        #     # 使用 TPU 时需先将 model sync 到 cpu 中再存储（这里还有 bug）
+        #     model_tmp = self.nnet.model.sync_to_cpu()
+        #     model_tmp.save_weights(filepath)
+        # else:
+        #     self.nnet.model.save_weights(filepath)
 
     def load_checkpoint(self, folder='checkpoint', filename='checkpoint.pth.tar'):
         # https://github.com/pytorch/examples/blob/master/imagenet/main.py#L98
@@ -66,11 +86,6 @@ class NNetWrapper(NeuralNetAgent):
         if not os.path.exists(filepath):
             raise ("No model in path {}".format(filepath))
         self.nnet.model.load_weights(filepath)
-
-
-from keras.models import *
-from keras.layers import *
-from keras.optimizers import *
 
 
 class OthelloNNet(object):
@@ -81,7 +96,12 @@ class OthelloNNet(object):
         self.args = args
 
         # Neural Net
-        self.input_boards = Input(shape=(self.board_x, self.board_y))  # s: batch_size x board_x x board_y
+        if args.use_tpu:
+            # 使用 TPU 时这里可以在多个核心中并发提高效率
+            self.input_boards = Input(shape=(self.board_x, self.board_y),
+                                      batch_size=self.args.model_batch_size)  # batch_size 指定模型输入大小
+        else:
+            self.input_boards = Input(shape=(self.board_x, self.board_y))
 
         x_image = Reshape((self.board_x, self.board_y, 1))(self.input_boards)  # batch_size  x board_x x board_y x 1
         h_conv1 = Activation('relu')(BatchNormalization(axis=3)(
@@ -105,4 +125,14 @@ class OthelloNNet(object):
         self.v = Dense(1, activation='tanh', name='v')(s_fc2)  # batch_size x 1
 
         self.model = Model(inputs=self.input_boards, outputs=[self.pi, self.v])
-        self.model.compile(loss=['categorical_crossentropy', 'mean_squared_error'], optimizer=Adam(args.lr))
+
+        if args.use_tpu:
+            # 支持 TPU 训练，关键代码在这里，需要一个TPU
+            self.model = tf.contrib.tpu.keras_to_tpu_model(
+                self.model,
+                strategy=tf.contrib.tpu.TPUDistributionStrategy(
+                    tf.contrib.cluster_resolver.TPUClusterResolver(tpu='grpc://' + os.environ['COLAB_TPU_ADDR'])
+                )
+            )
+        self.model.compile(loss=['categorical_crossentropy', 'mean_squared_error'],
+                           optimizer=tf.train.AdamOptimizer(learning_rate=args.lr))
