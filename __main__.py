@@ -96,5 +96,5 @@ def long_time_mode():
 
 if __name__ == '__main__':
     # 开启长时运行模式
-    # long_time_mode()
-    short_time_mode()
+    long_time_mode()
+    # short_time_mode()
