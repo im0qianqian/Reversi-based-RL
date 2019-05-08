@@ -26,15 +26,15 @@ default_args = DotDict({
     'update_threshold': 0.55,  # 更新阈值，超过该值更新神经网络
     'num_iteration_train_examples': 200000,
     'num_arena_compare': 20,  # 40,
-    'num_train_examples_history': 20,
+    'num_train_examples_history': 20,  # train examples 历史记录条数
 
-    'checkpoint_folder': os.path.join(project_root_path, './data/'),
+    'checkpoint_folder': os.path.join(project_root_path, './data/'),  # 模型文件夹
     'load_model': True,
-    'train_folder_file': 'train.pth.tar',
-    'best_folder_file': 'best.pth.tar',
+    'train_folder_file': 'train.pth.tar',  # 临时 train 模型文件名
+    'best_folder_file': 'best.pth.tar',  # 最优模型文件名
 
-    'logs_folder': os.path.join(project_root_path, './data/logs/'),
+    'logs_folder': os.path.join(project_root_path, './data/logs/'),  # log 文件夹
 
-    'num_self_play_pool': 2,
-    'num_test_play_pool': 2,
+    'num_self_play_pool': 2,  # 模拟游戏时的进程个数
+    'num_test_play_pool': 2,  # 执行测试时的进程个数
 })

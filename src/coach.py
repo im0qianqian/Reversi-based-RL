@@ -148,7 +148,6 @@ class Coach(object):
                             os.path.join(self.args.checkpoint_folder, 'checkpoint_{}_update.pth.tar'.format(idx)))
             # 这一步是删除旧版本的 best.pth.tar （其实也可以用下一步的 move 覆盖掉，然而谷歌云盘的历史版本很困扰惹）
             os.remove(os.path.join(self.args.checkpoint_folder, self.args.best_folder_file))
-            input()
             # 复制文件 train_folder_file 到 best_folder_file
             shutil.move(os.path.join(self.args.checkpoint_folder, self.args.train_folder_file),
                         os.path.join(self.args.checkpoint_folder, self.args.best_folder_file))

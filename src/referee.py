@@ -113,30 +113,29 @@ class Referee(object):
 
 
 if __name__ == "__main__":
-    # game = ReversiGame(8)
-    #
-    # randomAI = ReversiRandomPlayer(game)
-    # greedyAI1 = ReversiGreedyPlayer(game, greedy_mode=0)
-    # greedyAI2 = ReversiGreedyPlayer(game, greedy_mode=1)
-    # humanAI = ReversiHumanPlayer(game)
-    # botzoneAI = ReversiBotzonePlayer(game)
-    # # n1p = ReversiRLPlayer(game=game, choice_mode=1, check_point=['../data', '8x8_100checkpoints_best.pth.tar'])
-    # n2p = ReversiRLPlayer(game=game, choice_mode=1,
-    #                       check_point=[default_args.checkpoint_folder, default_args.best_folder_file])
-    #
-    # referee = Referee(n2p, n2p, game)
-    #
-    # print('start ...')
-    # time0 = time.time()
-    # for i in range(1):
-    #     print(referee.play_game(verbose=False))
-    # time1 = time.time()
-    # print('time: ', time1 - time0)
-
     game = ReversiGame(8)
 
-    path = r'C:\Users\qianqian\Downloads\drive-download-20190508T035530Z-001'
+    randomAI = ReversiRandomPlayer(game)
+    greedyAI1 = ReversiGreedyPlayer(game, greedy_mode=0)
+    greedyAI2 = ReversiGreedyPlayer(game, greedy_mode=1)
+    humanAI = ReversiHumanPlayer(game)
+    botzoneAI = ReversiBotzonePlayer(game)
+    # n1p = ReversiRLPlayer(game=game, choice_mode=1, check_point=['../data', '8x8_100checkpoints_best.pth.tar'])
+    n2p = ReversiRLPlayer(game=game, choice_mode=0,
+                          check_point=[default_args.checkpoint_folder, default_args.best_folder_file])
 
+    referee = Referee(n2p, botzoneAI, game)
+
+    print('start ...')
+    time0 = time.time()
+    for i in range(1):
+        print(referee.play_game(verbose=True))
+    time1 = time.time()
+    print('time: ', time1 - time0)
+
+    # game = ReversiGame(8)
+    #
+    # path = r'C:\Users\qianqian\Downloads\drive-download-20190508T035530Z-001'
 
     # for i in range(1, 10):
     #     for j in range(i + 1, 10):
@@ -149,15 +148,15 @@ if __name__ == "__main__":
     #         n_wins, p_wins, draws = Referee(p1, p2, game).play_games(10, verbose=False)
     #         print('{} vs {} wins : {} / {}, draws : {}'.format(i, j, n_wins, p_wins, draws))
 
-    def getFileMD5(filepath):
-        import hashlib
-        f = open(filepath, 'rb')
-        md5obj = hashlib.md5()
-        md5obj.update(f.read())
-        hash = md5obj.hexdigest()
-        f.close()
-        return str(hash).upper()
-
-
-    for i in range(2, 10):
-        print(i, getFileMD5(path + '/best({}).pth.tar'.format(i)))
+    # def getFileMD5(filepath):
+    #     import hashlib
+    #     f = open(filepath, 'rb')
+    #     md5obj = hashlib.md5()
+    #     md5obj.update(f.read())
+    #     hash = md5obj.hexdigest()
+    #     f.close()
+    #     return str(hash).upper()
+    #
+    #
+    # for i in range(2, 10):
+    #     print(i, getFileMD5(path + '/best({}).pth.tar'.format(i)))

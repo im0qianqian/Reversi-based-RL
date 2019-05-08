@@ -251,7 +251,7 @@ class ReversiRLPlayer(Player):
 
         # 临时操作
         if check_point is not None:
-            print('loading ... checkpoint: ', format(check_point))
+            # print('loading ... checkpoint: ', format(check_point))
             self.n1.load_checkpoint(check_point[0], check_point[1])
 
     def init(self, referee=None):

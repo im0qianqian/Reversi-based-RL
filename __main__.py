@@ -30,10 +30,9 @@ def short_time_mode():
     game = ReversiGame(8)
     my_color = init_board()
 
-    player = ReversiRLPlayer(game, ['data', '8x8_100checkpoints_best.pth.tar'])
-    player.init(my_color)
+    player = ReversiRLPlayer(game, choice_mode=0, check_point=['data', 'best.pth.tar'])
 
-    action = player.play(game.get_current_state())
+    action = player.play(game.get_relative_state(player=my_color, board=game.get_current_state()))[0]
 
     if 0 <= action < game.n ** 2:
         x, y = int(action // game.n), int(action % game.n)
@@ -73,12 +72,12 @@ def long_time_mode():
         board, _ = game.get_next_state(-my_color, action, board)
 
     # 加载 RL 玩家
-    player = ReversiRLPlayer(game, ['data', '8x8_100checkpoints_best.pth.tar'])
+    player = ReversiRLPlayer(game, choice_mode=0, check_point=['data', 'best.pth.tar'])
     # 初始化颜色
     player.init(my_color)
 
     # 执行一次操作
-    action = player.play(board)
+    action = player.play(game.get_relative_state(player=my_color, board=board))[0]
     board, _ = game.get_next_state(my_color, action, board)
     put_response(action)
     try:
@@ -88,7 +87,7 @@ def long_time_mode():
             board, _ = game.get_next_state(-my_color, action, board)
 
             # 己方
-            action = player.play(board)
+            action = player.play(game.get_relative_state(player=my_color, board=board))[0]
             board, _ = game.get_next_state(my_color, action, board)
             put_response(action)
     except EOFError:
@@ -97,4 +96,5 @@ def long_time_mode():
 
 if __name__ == '__main__':
     # 开启长时运行模式
-    long_time_mode()
+    # long_time_mode()
+    short_time_mode()
