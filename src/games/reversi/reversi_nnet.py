@@ -2,14 +2,14 @@ import os
 import time
 from src.games.nnet_agent import NeuralNetAgent
 import tensorflow as tf
-from tensorflow.python.keras.layers import *
-from tensorflow.python.keras.models import *
-from tensorflow.python.keras.optimizers import *
-from tensorflow.python.keras.callbacks import TensorBoard
-# from keras.layers import *
-# from keras.models import *
-# from keras.optimizers import *
-# from keras.callbacks import TensorBoard
+# from tensorflow.python.keras.layers import *
+# from tensorflow.python.keras.models import *
+# from tensorflow.python.keras.optimizers import *
+# from tensorflow.python.keras.callbacks import TensorBoard
+from keras.layers import *
+from keras.models import *
+from keras.optimizers import *
+from keras.callbacks import TensorBoard
 import numpy as np
 
 
