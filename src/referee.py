@@ -130,7 +130,7 @@ if __name__ == "__main__":
     print('start ...')
     time0 = time.time()
     for i in range(1):
-        print(referee.play_game(verbose=False))
+        print(referee.play_games(5, verbose=False))
     time1 = time.time()
     print('time: ', time1 - time0)
 

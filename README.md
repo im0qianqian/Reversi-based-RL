@@ -50,6 +50,8 @@
     - [x] **基于深度强化学习的 AI（最重要）**
         - [x] MCTS
         - [x] Keras NNet
+        - [x] 多进程 self-play
+        - [x] TPU 支持（差一个谷歌云存储 QAQ）
 - [x] Botzone
     - [x] 本地 AI 配置
     - [x] 可参与天梯对局的 AI
