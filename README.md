@@ -49,7 +49,7 @@
         - 可贪心使得对方行动力最小
     - [x] **基于深度强化学习的 AI（最重要）**
         - [x] MCTS
-        - [x] PyTorch NNet
+        - [x] Keras NNet
 - [x] Botzone
     - [x] 本地 AI 配置
     - [x] 可参与天梯对局的 AI
