@@ -120,16 +120,17 @@ if __name__ == "__main__":
     greedyAI2 = ReversiGreedyPlayer(game, greedy_mode=1)
     humanAI = ReversiHumanPlayer(game)
     botzoneAI = ReversiBotzonePlayer(game)
-    # n1p = ReversiRLPlayer(game=game, choice_mode=1, check_point=['../data', '8x8_100checkpoints_best.pth.tar'])
-    n2p = ReversiRLPlayer(game=game, choice_mode=0,
-                          check_point=[default_args.checkpoint_folder, default_args.best_folder_file])
+    # 加载旧模型玩家（旧的 best_folder_file）
+    p_player = ReversiRLPlayer(game=game, choice_mode=0, nnet=None,
+                               check_point=[default_args.checkpoint_folder, default_args.best_folder_file],
+                               args=default_args)
 
-    referee = Referee(n2p, botzoneAI, game)
+    referee = Referee(p_player, p_player, game)
 
     print('start ...')
     time0 = time.time()
     for i in range(1):
-        print(referee.play_game(verbose=True))
+        print(referee.play_game(verbose=False))
     time1 = time.time()
     print('time: ', time1 - time0)
 
@@ -156,7 +157,6 @@ if __name__ == "__main__":
     #     hash = md5obj.hexdigest()
     #     f.close()
     #     return str(hash).upper()
-    #
-    #
-    # for i in range(2, 10):
+
+    # for i in range(20):
     #     print(i, getFileMD5(path + '/best({}).pth.tar'.format(i)))

@@ -1,7 +1,3 @@
-from src.games.game import Game
-import numpy as np
-
-
 class Player(object):
     """
     定义一个玩家类
