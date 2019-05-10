@@ -121,16 +121,21 @@ if __name__ == "__main__":
     humanAI = ReversiHumanPlayer(game)
     botzoneAI = ReversiBotzonePlayer(game)
     # 加载旧模型玩家（旧的 best_folder_file）
+    n_player = ReversiRLPlayer(game=game, choice_mode=0, nnet=None,
+                               check_point=[r'C:\Users\qianqian\Downloads\drive-download-20190508T035530Z-001',
+                                            'checkpoint_43_update.pth.tar'],
+                               args=default_args)
     p_player = ReversiRLPlayer(game=game, choice_mode=0, nnet=None,
-                               check_point=[default_args.checkpoint_folder, default_args.best_folder_file],
+                               check_point=[r'C:\Users\qianqian\Documents\GitHub\Reversi-based-RL\data',
+                                            'best.pth.tar'],
                                args=default_args)
 
-    referee = Referee(p_player, p_player, game)
+    referee = Referee(n_player, p_player, game)
 
     print('start ...')
     time0 = time.time()
     for i in range(1):
-        print(referee.play_games(5, verbose=False))
+        print(referee.play_games(40, verbose=False))
     time1 = time.time()
     print('time: ', time1 - time0)
 

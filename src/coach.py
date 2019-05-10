@@ -1,6 +1,6 @@
 import sys
 
-sys.path.extend(['/content/gdrive/My Drive/Reversi-based-RL_old'])
+sys.path.extend(['/content/gdrive/My Drive/Reversi-based-RL'])
 from src.referee import Referee
 from src.games.reversi.reversi_game import ReversiGame as Game
 from src.games.reversi.reversi_player import *
@@ -68,7 +68,7 @@ class Coach(object):
             episode_time = time.time()
         return train_examples_tmp
 
-    def parallel_self_play(self):
+    def parallel_self_play(self, idx):
         """
         self play，返回得到的 train_examples_list
         """
@@ -90,7 +90,7 @@ class Coach(object):
         else:
             train_examples_list += self.async_execute_episode(0, self.args.num_episode)
 
-        print('parallel_self_play done! time: {}s'.format(time.time() - start_time))
+        print('parallel_self_play {} done! time: {}s'.format(idx, time.time() - start_time))
         return train_examples_list
 
     def async_self_test_play(self, idx, process_test_num):
@@ -145,7 +145,7 @@ class Coach(object):
             print('accepting new model... copy train_folder_file to best_folder_file')
             # 我在这里偷偷的拷贝一份没有人知道吧
             shutil.copyfile(os.path.join(self.args.checkpoint_folder, self.args.train_folder_file),
-                            os.path.join(self.args.checkpoint_folder, 'checkpoint_{}_update.pth.tar'.format(idx)))
+                            os.path.join(self.args.checkpoint_folder, self.args.checkpoint_filename_format.format(idx)))
 
             # 这一步是删除旧版本的 best.pth.tar （其实也可以用下一步的 move 覆盖掉，然而谷歌云盘的历史版本很困扰惹）
             # 好像即使删掉原文件也会记录历史版本，那还是删掉吧
@@ -182,9 +182,13 @@ class Coach(object):
 
     def start_learn(self):
         """学习学习"""
+        # 从前一次保存的 examples 加载数据
+        if self.args.load_model and self.load_train_examples(self.args.iteration_start - 1):
+            print('load model from', self.args.train_examples_filename_format.format(self.args.iteration_start - 1))
+
         for i in range(self.args.iteration_start, self.args.iteration_start + self.args.num_iteration):  # 迭代
             print("----------------- 第 {} 次迭代 ----------------".format(i))
-            self.train_examples_history.append(self.parallel_self_play())
+            self.train_examples_history.append(self.parallel_self_play(i))
 
             # 保存 train_examples 数据
             self.save_train_examples(i)
@@ -199,7 +203,7 @@ class Coach(object):
     def save_train_examples(self, idx):
         # 存储测试点
         try:
-            filename = os.path.join(self.args.checkpoint_folder, 'checkpoint_{}.examples'.format(idx))
+            filename = os.path.join(self.args.checkpoint_folder, self.args.train_examples_filename_format.format(idx))
             with open(filename, 'wb+') as f:
                 pickle.Pickler(f).dump(self.train_examples_history)
             f.close()
@@ -209,12 +213,15 @@ class Coach(object):
     def load_train_examples(self, idx):
         # 加载测试点
         try:
-            filename = os.path.join(self.args.checkpoint_folder, 'checkpoint_{}.examples'.format(idx))
-            with open(filename, 'rb') as f:
-                self.train_examples_history += pickle.Unpickler(f).load()
-            f.close()
+            filename = os.path.join(self.args.checkpoint_folder, self.args.train_examples_filename_format.format(idx))
+            if os.path.isfile(filename):
+                with open(filename, 'rb') as f:
+                    self.train_examples_history += pickle.Unpickler(f).load()
+                f.close()
+                return True
         except Exception as e:
             print('load train examples error, ', e)
+        return False
 
 
 if __name__ == '__main__':
