@@ -22,7 +22,6 @@ class Coach(object):
     def __init__(self, game, args):
         self.game = game
         self.args = args
-        self.train_examples_history = deque(maxlen=self.args.num_train_examples_history)
 
     def execute_episode(self, game, player1, player2):
         train_examples = []
@@ -155,12 +154,12 @@ class Coach(object):
             shutil.move(os.path.join(self.args.checkpoint_folder, self.args.train_folder_file),
                         os.path.join(self.args.checkpoint_folder, self.args.best_folder_file))
 
-    def train_network(self):
+    def train_network(self, train_examples_history):
         nnet = NNet(self.game, self.args)
         # 从最优模型加载
         nnet.load_checkpoint(folder=self.args.checkpoint_folder, filename=self.args.best_folder_file)
         train_examples = []
-        for e in self.train_examples_history:
+        for e in train_examples_history:
             train_examples.extend(e)
         # 打乱顺序
         np.random.shuffle(train_examples)
@@ -169,54 +168,57 @@ class Coach(object):
         # 保存为训练模型
         nnet.save_checkpoint(folder=self.args.checkpoint_folder, filename=self.args.train_folder_file)
 
-    def parallel_train_network(self, idx):
+    def parallel_train_network(self, idx, train_examples_history):
         train_start_time = time.time()
         if self.args.use_multiprocessing:
             # 使用得到的数据进行训练（这里单进程进行，使用 Process 可以看到显存被释放了，虽然不懂 tf 有没有在自己维护的内部自动释放）
-            p = multiprocessing.Process(target=self.train_network)
+            p = multiprocessing.Process(target=self.train_network, args=(train_examples_history,))
             p.start()
             p.join()
         else:
-            self.train_network()
+            self.train_network(train_examples_history)
         print('------- iteration {} train done! time: {}s ----------'.format(idx, time.time() - train_start_time))
 
     def start_learn(self):
         """学习学习"""
+        # 保存所有的 examples 记录
+        train_examples_history = deque(maxlen=self.args.num_train_examples_history)
+
         # 从前一次保存的 examples 加载数据
-        if self.args.load_model and self.load_train_examples(self.args.iteration_start - 1):
+        if self.args.load_model and self.load_train_examples(self.args.iteration_start - 1, train_examples_history):
             print('load model from', self.args.train_examples_filename_format.format(self.args.iteration_start - 1))
 
         for i in range(self.args.iteration_start, self.args.iteration_start + self.args.num_iteration):  # 迭代
             print("----------------- 第 {} 次迭代 ----------------".format(i))
-            self.train_examples_history.append(self.parallel_self_play(i))
+            train_examples_history.append(self.parallel_self_play(i))
 
             # 保存 train_examples 数据
-            self.save_train_examples(i)
+            self.save_train_examples(i, train_examples_history)
 
             # 训练网络
-            self.parallel_train_network(i)
+            self.parallel_train_network(i, train_examples_history)
 
             # 测试
             self.parallel_self_test_play(i)
             print('------- iteration {} self-play test done! -----------'.format(i))
 
-    def save_train_examples(self, idx):
+    def save_train_examples(self, idx, train_examples_history):
         # 存储测试点
         try:
             filename = os.path.join(self.args.checkpoint_folder, self.args.train_examples_filename_format.format(idx))
             with open(filename, 'wb+') as f:
-                pickle.Pickler(f).dump(self.train_examples_history)
+                pickle.Pickler(f).dump(train_examples_history)
             f.close()
         except Exception as e:
             print('save train examples error, ', e)
 
-    def load_train_examples(self, idx):
+    def load_train_examples(self, idx, train_examples_history):
         # 加载测试点
         try:
             filename = os.path.join(self.args.checkpoint_folder, self.args.train_examples_filename_format.format(idx))
             if os.path.isfile(filename):
                 with open(filename, 'rb') as f:
-                    self.train_examples_history += pickle.Unpickler(f).load()
+                    train_examples_history += pickle.Unpickler(f).load()
                 f.close()
                 return True
         except Exception as e:
