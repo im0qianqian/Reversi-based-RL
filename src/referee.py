@@ -81,7 +81,11 @@ class Referee(object):
                     current_board) == self.game.WinnerState.PLAYER2_WIN else "平局！")
         return self.game.get_winner(current_board)
 
-    def play_games(self, num, verbose=False):
+    def play_games(self, num, verbose=False, exit_threshold=(float('inf'), float('inf'))):
+        """
+        exit_threshold 代表是否提前结束的阈值，其实不想加这个的，因为感觉对面向对象设计有点***，但为了快速的训练，还是加上吧
+            其中两个参数分别是 player1_won 与 player2_won 超过它时退出
+        """
         player1_won = 0
         player2_won = 0
         draws = 0
@@ -95,6 +99,9 @@ class Referee(object):
                 player2_won += 1
             print('arena compare player1 --> player2, eps: {} / {}, player1_won: {}, player2_won: {}, draws: {}'.format(
                 _ + 1, num, player1_won, player2_won, draws))
+            if player1_won > exit_threshold[0] or player2_won > exit_threshold[1]:
+                print('exit_threshold trigger, exit now...')
+                return player1_won, player2_won, draws
 
         # 以下反转两个玩家再进行 num 次
         self.player1, self.player2 = self.player2, self.player1
@@ -108,6 +115,9 @@ class Referee(object):
                 player2_won += 1
             print('arena compare player2 --> player1, eps: {} / {}, player1_won: {}, player2_won: {}, draws: {}'.format(
                 _ + 1, num, player1_won, player2_won, draws))
+            if player1_won > exit_threshold[0] or player2_won > exit_threshold[1]:
+                print('exit_threshold trigger, exit now...')
+                return player1_won, player2_won, draws
 
         return player1_won, player2_won, draws
 

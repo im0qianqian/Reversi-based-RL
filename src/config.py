@@ -24,7 +24,7 @@ default_args = DotDict({
     'update_threshold': 0.6,  # 更新阈值，超过该值更新神经网络
     'num_iteration_train_examples': 200000,
     'num_arena_compare': 40,
-    'num_train_examples_history': 20,  # train examples 历史记录条数
+    'num_train_examples_history': 5,  # train examples 历史记录条数
 
     'checkpoint_folder': os.path.join(project_root_path, './data/'),  # 模型文件夹
     'load_model': True,

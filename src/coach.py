@@ -104,7 +104,14 @@ class Coach(object):
                                    check_point=[self.args.checkpoint_folder, self.args.best_folder_file],
                                    args=self.args)
 
-        n_wins, p_wins, draws = Referee(n_player, p_player, self.game).play_games(process_test_num, verbose=False)
+        # 当目前只有一个进程执行 test 时启用退出阈值
+        exit_threshold = (
+            float('inf'), float('inf')) if self.args.use_multiprocessing and self.args.num_test_play_pool != 1 else (
+            self.args.update_threshold * process_test_num * 2, (1 - self.args.update_threshold) * process_test_num * 2)
+
+        n_wins, p_wins, draws = Referee(n_player, p_player, self.game).play_games(process_test_num, verbose=False,
+                                                                                  exit_threshold=exit_threshold)
+
         print('process: {}, new/prev wins : {} / {}, draws : {}'.format(idx, n_wins, p_wins, draws))
         return n_wins, p_wins, draws
 
