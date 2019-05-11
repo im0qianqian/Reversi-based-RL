@@ -2,6 +2,7 @@ import json
 import sys
 from src.games.reversi.reversi_game import ReversiGame
 from src.games.reversi.reversi_player import ReversiRLPlayer
+from src.config import default_args
 
 
 def short_time_mode():
@@ -30,7 +31,7 @@ def short_time_mode():
     game = ReversiGame(8)
     my_color = init_board()
 
-    player = ReversiRLPlayer(game, choice_mode=0, check_point=['data', 'best.pth.tar'])
+    player = ReversiRLPlayer(game, choice_mode=0, check_point=['data', default_args.best_folder_file])
 
     action = player.play(game.get_relative_state(player=my_color, board=game.get_current_state()))[0]
 
@@ -72,7 +73,7 @@ def long_time_mode():
         board, _ = game.get_next_state(-my_color, action, board)
 
     # 加载 RL 玩家
-    player = ReversiRLPlayer(game, choice_mode=0, check_point=['data', 'best.pth.tar'])
+    player = ReversiRLPlayer(game, choice_mode=0, check_point=['data', default_args.best_folder_file])
     # 初始化颜色
     player.init(my_color)
 

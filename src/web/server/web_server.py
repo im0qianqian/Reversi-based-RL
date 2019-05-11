@@ -17,8 +17,6 @@ class ReversiWebServer(object):
         nnet = NNet(self.game, default_args)
 
         nnet.nnet.model._make_predict_function()  # 这一句是在使用 keras 时需要在多线程预测之前执行的
-        # self.reversi_ai = ReversiRLPlayer(self.game, choice_mode=0, nnet=nnet, args=default_args,
-        #                                   check_point=['../../../data', '8x8_100checkpoints_best.pth.tar'])
         self.reversi_ai = ReversiRLPlayer(game=self.game, choice_mode=0, nnet=nnet,
                                           check_point=[default_args.checkpoint_folder, default_args.best_folder_file],
                                           args=default_args)

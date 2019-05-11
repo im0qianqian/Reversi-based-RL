@@ -29,9 +29,9 @@ default_args = DotDict({
     'checkpoint_folder': os.path.join(project_root_path, './data/'),  # 模型文件夹
     'load_model': True,
     'train_examples_filename_format': 'checkpoint_{}.examples',  # 本地 examples 存储格式
-    'checkpoint_filename_format': 'checkpoint_{}_update.pth.tar',  # checkpoint 存储格式
-    'train_folder_file': 'train.pth.tar',  # 临时 train 模型文件名
-    'best_folder_file': 'best.pth.tar',  # 最优模型文件名
+    'checkpoint_filename_format': 'checkpoint_{}_update.h5',  # checkpoint 存储格式
+    'train_folder_file': 'train.h5',  # 临时 train 模型文件名
+    'best_folder_file': 'best.h5',  # 最优模型文件名
 
     'logs_folder': os.path.join(project_root_path, './data/logs/'),  # log 文件夹
 

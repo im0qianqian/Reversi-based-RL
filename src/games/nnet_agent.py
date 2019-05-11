@@ -12,13 +12,13 @@ class NeuralNetAgent(object):
         """
         pass
 
-    def save_checkpoint(self, filepath):
+    def save_checkpoint(self, folder, filename):
         """
         保存当前的神经网络
         """
         pass
 
-    def load_checkpoint(self, filepath):
+    def load_checkpoint(self, folder, filename):
         """
         加载神经网络
         """
