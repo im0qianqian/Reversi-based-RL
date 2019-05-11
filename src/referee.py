@@ -89,6 +89,7 @@ class Referee(object):
         player1_won = 0
         player2_won = 0
         draws = 0
+        start_time = time.time()
         for _ in range(num):
             result = self.play_game(verbose=verbose)
             if result == self.game.WinnerState.DRAW:
@@ -97,8 +98,10 @@ class Referee(object):
                 player1_won += 1
             else:
                 player2_won += 1
-            print('arena compare player1 --> player2, eps: {} / {}, player1_won: {}, player2_won: {}, draws: {}'.format(
-                _ + 1, num, player1_won, player2_won, draws))
+            print(
+                'arena compare player1 --> player2, eps: {} / {}, player1_won: {}, player2_won: {}, draws: {}, time: {}'.format(
+                    _ + 1, num, player1_won, player2_won, draws, time.time() - start_time))
+            start_time = time.time()
             if player1_won > exit_threshold[0] or player2_won > exit_threshold[1]:
                 print('exit_threshold trigger, exit now...')
                 return player1_won, player2_won, draws
@@ -113,8 +116,10 @@ class Referee(object):
                 player1_won += 1
             else:
                 player2_won += 1
-            print('arena compare player2 --> player1, eps: {} / {}, player1_won: {}, player2_won: {}, draws: {}'.format(
-                _ + 1, num, player1_won, player2_won, draws))
+            print(
+                'arena compare player2 --> player1, eps: {} / {}, player1_won: {}, player2_won: {}, draws: {},time: {}'.format(
+                    _ + 1, num, player1_won, player2_won, draws, time.time() - start_time))
+            start_time = time.time()
             if player1_won > exit_threshold[0] or player2_won > exit_threshold[1]:
                 print('exit_threshold trigger, exit now...')
                 return player1_won, player2_won, draws
@@ -132,12 +137,12 @@ if __name__ == "__main__":
     botzoneAI = ReversiBotzonePlayer(game)
     # 加载旧模型玩家（旧的 best_folder_file）
     n_player = ReversiRLPlayer(game=game, choice_mode=0, nnet=None,
-                               check_point=[r'C:\Users\qianqian\Downloads\drive-download-20190508T035530Z-001',
-                                            'checkpoint_43_update.pth.tar'],
+                               check_point=[r'C:\Users\qianqian\Downloads\reversi checkpoints',
+                                            'checkpoint_48_update.pth.tar'],
                                args=default_args)
     p_player = ReversiRLPlayer(game=game, choice_mode=0, nnet=None,
-                               check_point=[r'C:\Users\qianqian\Documents\GitHub\Reversi-based-RL\data',
-                                            'best.pth.tar'],
+                               check_point=[r'C:\Users\qianqian\Downloads\reversi checkpoints',
+                                            'checkpoint_48_update.pth.tar'],
                                args=default_args)
 
     referee = Referee(n_player, p_player, game)
@@ -145,7 +150,7 @@ if __name__ == "__main__":
     print('start ...')
     time0 = time.time()
     for i in range(1):
-        print(referee.play_games(40, verbose=False))
+        print(referee.play_games(1, verbose=False))
     time1 = time.time()
     print('time: ', time1 - time0)
 

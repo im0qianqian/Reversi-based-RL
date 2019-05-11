@@ -1,6 +1,7 @@
 import sys
 
 sys.path.extend(['/content/gdrive/My Drive/Reversi-based-RL'])
+sys.path.extend([r'C:\Users\qianqian\Documents\GitHub\Reversi-based-RL'])
 from src.referee import Referee
 from src.games.reversi.reversi_game import ReversiGame as Game
 from src.games.reversi.reversi_player import *
