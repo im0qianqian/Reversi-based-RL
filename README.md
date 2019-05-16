@@ -183,3 +183,7 @@ by im0qianqian 2019.05.09
 by im0qianqian 2019.05.15
 
 ---
+
+？？？为什么昨天晚上 colab 从第 17 次迭代开始的？
+
+by im0qianqian 2019.05.16
