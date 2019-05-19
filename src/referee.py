@@ -145,29 +145,31 @@ if __name__ == "__main__":
     #                                         'checkpoint_48_update.pth.tar'],
     #                            args=default_args)
 
-    referee = Referee(n_player, botzoneAI, game)
+    referee = Referee(botzoneAI, n_player, game)
 
     print('start ...')
-    time0 = time.time()
-    for i in range(1):
-        print(referee.play_game(verbose=False))
-    time1 = time.time()
-    print('time: ', time1 - time0)
+    # time0 = time.time()
+    # for i in range(1):
+    #     print(referee.play_game(verbose=False))
+    # time1 = time.time()
+    # print('time: ', time1 - time0)
 
-    # game = ReversiGame(8)
-    #
-    # path = r'C:\Users\qianqian\Downloads\drive-download-20190508T035530Z-001'
+    game = ReversiGame(8)
 
-    # for i in range(1, 10):
-    #     for j in range(i + 1, 10):
-    #         p1 = ReversiRLPlayer(game=game, choice_mode=0, nnet=None,
-    #                              check_point=[path, 'best.pth({}).tar'.format(i)],
-    #                              args=default_args)
-    #         p2 = ReversiRLPlayer(game=game, choice_mode=0, nnet=None,
-    #                              check_point=[path, 'best.pth({}).tar'.format(j)],
-    #                              args=default_args)
-    #         n_wins, p_wins, draws = Referee(p1, p2, game).play_games(10, verbose=False)
-    #         print('{} vs {} wins : {} / {}, draws : {}'.format(i, j, n_wins, p_wins, draws))
+    path = r'/content/gdrive/My Drive/Reversi-based-RL/data'
+
+    lst = [0, 15, 24, 32, 48, 75, 89, 95, 102, 118]
+    for i in range(10):
+        for j in range(i + 1, 10):
+            print(lst[i], 'vs', lst[j])
+            p1 = ReversiRLPlayer(game=game, choice_mode=0, nnet=None,
+                                 check_point=[path, 'checkpoint_{}_update.h5'.format(lst[i])],
+                                 args=default_args)
+            p2 = ReversiRLPlayer(game=game, choice_mode=0, nnet=None,
+                                 check_point=[path, 'checkpoint_{}_update.h5'.format(lst[j])],
+                                 args=default_args)
+            n_wins, p_wins, draws = Referee(p1, p2, game).play_games(10, verbose=False)
+            print('{} vs {} wins : {} / {}, draws : {}'.format(i, j, n_wins, p_wins, draws))
 
     # def getFileMD5(filepath):
     #     import hashlib
