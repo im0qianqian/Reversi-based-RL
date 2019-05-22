@@ -37,4 +37,8 @@ default_args = DotDict({
 
     'num_self_play_pool': 2,  # 模拟游戏时的进程个数
     'num_test_play_pool': 1,  # 执行测试时的进程个数
+
+    'web_http_host': ('localhost', 9420),
+    'web_ssl_cert_file': os.path.join(project_root_path, './src/test/caimouse.crt'),
+    'web_ssl_key_file': os.path.join(project_root_path, './src/test/caimouse.key'),
 })

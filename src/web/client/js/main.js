@@ -162,7 +162,7 @@ function Othello() {
 		// 发送数据
 		$.ajax({
 			type: "POST",
-			url: 'http://localhost:9420',
+			url: 'https://localhost:9420',
 			data: JSON.stringify(request),
 			dataType: "json",
 			async: true,
