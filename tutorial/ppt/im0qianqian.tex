@@ -1,0 +1,108 @@
+% !TEX program = xelatex
+
+\documentclass[10pt,aspectratio=169,mathserif]{beamer}		
+%设置为 Beamer 文档类型，设置字体为 10pt，长宽比为16:9，数学字体为 serif 风格
+
+%%%%-----导入宏包-----%%%%
+\usepackage{ecnu}			%导入 CCNU 模板宏包
+\usepackage{ctex}			 %导入 ctex 宏包，添加中文支持
+\usepackage{amsmath,amsfonts,amssymb,bm}   %导入数学公式所需宏包
+\usepackage{color}			 %字体颜色支持
+\usepackage{graphicx,hyperref,url}	
+%%%%%%%%%%%%%%%%%%	
+
+
+\beamertemplateballitem		%设置 Beamer 主题
+
+%%%%------------------------%%%%%
+\catcode`\。=\active         %或者=13
+\newcommand{。}{．}				
+%将正文中的“。”号转换为“.”。
+%%%%%%%%%%%%%%%%%%%%%
+
+%%%%----首页信息设置----%%%%
+\title[Design and Implementation of Othello Based on Reinforcement Learning]{基于强化学习的黑白棋的设计与实现}
+\subtitle{Design and Implementation of Othello Based on Reinforcement Learning}			
+%%%%----标题设置
+
+
+\author[by im0qianqian]{
+  Zhao Qian \\\medskip
+  {\small {Adviser: Jerry Wang}} \\
+}
+%%%%----个人信息设置
+
+\institute[YTU]{
+  Yantai University \\
+  School of Computer and Control Engineering}
+%%%%----机构信息
+
+\date[2019.06.01111]{
+  2019.06.01}
+%%%%----日期信息
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}				%生成标题页
+
+\section{Outline}
+\begin{frame}
+\frametitle{Outline1}
+\tableofcontents
+\end{frame}				%生成提纲页
+
+\section{Introduction}
+\begin{frame}
+  \frametitle{Backgrounds}
+  \begin{itemize}
+    \item {1111111111111}
+    \item {2222222222222}
+  \end{itemize}
+  \begin{enumerate}
+    \item {3333333}
+    \item {44444444}
+  \end{enumerate}
+  \begin{description}
+    \item[First Item] Description of first item
+    \item[Second Item] Description of second item
+    \item[Third Item] Description of third item
+    \item[Forth Item] Description of forth item
+   \end{description}
+\end{frame}
+
+\section{Photo}
+\begin{frame}
+  \frametitle{My Photo}
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[width=0.3\textwidth]{4.jpg}
+        \caption{hahahaha...}\label{fig:digit}
+    \end{figure}
+\end{frame}
+
+\section{Conclusion}
+\begin{frame}
+  \frametitle{Emmm...}
+  \noindent\textbf{Sequence Tagging Loss\\}
+    \[{\mathcal{L}_p} =  - \sum\limits_{i = 1}^S {\sum\limits_{j = 1}^N {{p_{i,j}}\log ({{\hat p}_{i,j}})} } \]
+  \noindent\textbf{Language Classifier Loss\\}
+   \[{\mathcal{L}_a} =  - \sum\limits_{i = 1}^S {{l_i}\log ({{\hat l}_i})}\]
+  \noindent\textbf{Bidirectional Language Model Loss\\}
+   \[{\mathcal{L}_l} =  - \sum\limits_{i = 1}^S {\sum\limits_{j = 1}^N {\log (P({w_{j + 1}}|{f_j})) + \log (P({w_{j - 1}}|{b_j}))} }\]
+\end{frame}
+
+\section{References}
+\begin{frame}{References}
+\begin{thebibliography}{99}
+\bibitem{zhao1} Xuezhe Ma and Eduard Hovy. (2016).\\
+{\bf End-to-end Sequence Labeling via Bi-directional LSTM-CNNs-CRF.\\}
+In Proceedings of the 54th Annual Meeting of the Association for Computational Linguistics, pages 1064–1074, Berlin, Germany, August 7-12, 2016.
+\bibitem{zhao2} Marek Rei. (2017).\\
+{\bf Semi-supervised Multitask Learning for Sequence Labeling.\\}
+In Proceedings of the 55th Annual Meeting of the Association for Computational Linguistics, pages 2121–2130, Vancouver, Canada, July 30 - August 4, 2017.
+\end{thebibliography}
+\end{frame}
+
+\end{document}
