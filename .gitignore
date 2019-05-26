@@ -5,6 +5,7 @@
 .vscode/
 logs/
 src/test/
+tutorial/*/test/
 data/
 
 # User-specific files
