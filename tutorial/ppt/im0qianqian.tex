@@ -22,6 +22,13 @@
 \usetikzlibrary{positioning}
 \tikzset{>=stealth}
 
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{mathrsfs}
+\usepackage{multirow}
+\usepackage{lineno}
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\renewcommand{\algorithmicensure}{\textbf{Output:}}
 %%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%
@@ -44,7 +51,7 @@
 
 \author[by im0qianqian]{
   Zhao Qian \\\medskip
-  {\small {Adviser: Jerry Wang}} \\
+  {\small {Adviser: Wang Jianhua}} \\
 }
 %%%%----个人信息设置
 
@@ -202,8 +209,8 @@
         \column{.7\textwidth}
       \centering
     \begin{itemize}
-    \item {\footnotesize $\vec{p}_\theta(s_t):$ 当前玩家在状态 $s_t$ 下选择每个动作的概率}
-    \item {\footnotesize $v_\theta(s_t):$ 当前玩家在状态 $s_t$ 下获胜的概率估计}
+    \item {\footnotesize \songti $\vec{p}_\theta(s_t):$ 当前玩家在状态 $s_t$ 下选择每个动作的概率}
+    \item {\footnotesize \songti $v_\theta(s_t):$ 当前玩家在状态 $s_t$ 下获胜的概率估计}
     \end{itemize}
     \end{columns}
     \end{tcolorbox}
@@ -233,21 +240,70 @@
   \begin{tcolorbox}[standard jigsaw,title=\small 神经网络 $f_\theta$ (train),titlerule=0em,opacityback=.5,colbacktitle=black!70!white,colframe=white]
       \begin{columns}
         \column{.5\textwidth}
-         {\footnotesize Input: ${\rm train\ data\ }(s_t, \vec{\pi}_t, z_t)$\\}
-         {\footnotesize ToDo: 最小化 $\vec{p}_\theta(s_t)$ 与 $\vec{\pi}_t$，$v_\theta(s_t)$ 与 $z_t$ 间的差距}
+         {\footnotesize \songti Input: ${\rm train\ data\ }(s_t, \vec{\pi}_t, z_t)$\\}
+         {\footnotesize \songti ToDo: 最小化 $\vec{p}_\theta(s_t)$ 与 $\vec{\pi}_t$，$v_\theta(s_t)$ 与 $z_t$ 间的差距}
       \column{.5\textwidth}
         \begin{equation*}
           \footnotesize Loss = \sum_t (v_\theta(s_t) - z_t)^2 - \vec{\pi}_t \cdot \log(\vec{p}_\theta(s_t))
         \end{equation*}
     \end{columns}
+    % \begin{itemize}
+    %   \item {\footnotesize $s_t$ 代表棋盘状态()，$+1$ 代表黑棋，$0$ 代表空位，$-1$ 代表白棋}
+    %   \item {\footnotesize $\vec{p}_\theta(s_t)$ 为大小为 $65$ 的 vector，其中 $64$ 为棋盘 $8 \times 8$ 个位置，剩余一个为无子可下的动作}
+    %   \item {\footnotesize $v_\theta(s_t) \in [-1,1]$，代表在 $s_t$ 下的优劣程度，$v_\theta(s_t)>0$ 为优势，$v_\theta(s_t)<0$ 为劣势，否则势均力敌}
+    % \end{itemize}
     \end{tcolorbox}
+
+    \textbf{\small NNet Structure (CNN)}
+      \begin{figure}
+        \includegraphics[width=.95\textwidth]{img/NNetStructure.pdf}
+      \end{figure}
+    
 \end{frame}
 
 \subsection{使用蒙特卡洛搜索进行策略改进}
 \begin{frame}
   \frametitle{Monte Carlo Tree Search for Policy Improvement}
-  \textbf{Sample Text\\}
-  \noindent\textbf{Sample Text\\}
+  \begin{columns}
+    \column{.6\textwidth}
+    \begin{figure}
+        \includegraphics[width=4.5cm]{img/board.pdf}
+    \end{figure}
+    \begin{itemize}
+      \item \small \songti $Q(s,a)$：在状态 $s$ 下采取动作 $a$ 所得到的预期奖励
+      \item \small \songti $N(s,a)$：所有模拟中在状态 $s$ 下采取动作 $a$ 的次数
+      \item \small \songti $P(s,\cdot)=\vec{p}_\theta(s)$：在状态 $s$ 下采取动作的先验概率
+      \item \small \songti $U(s,a)$：Q value 的置信区间上界
+    \end{itemize}
+    {\small \songti 其中 $U(s,a) = Q(s,a) + c_{puct}\cdot P(s,a)\cdot\frac{\sqrt{\Sigma_b N(s,b)}}{1+N(s,a)}$}
+    \column{.4\textwidth}
+      \begin{spacing}{.1}
+      % \begin{algorithm}[H]
+            \begin{algorithmic}[1]
+                \Procedure{MCTS}{$s, \theta$}
+                \If {$s$ is $terminal$}
+                  \State {\Return {$game\_result$}}
+                \EndIf
+                \If {$s \not\in Tree$}
+                  \State {$Tree \gets Tree \cup s$}
+                  \State {$Q(s, \cdot) \gets 0$}
+                  \State {$N(s, \cdot) \gets 0$}
+                  \State {$P(s, \cdot) \gets \vec{p}_\theta(s)$}
+                  \State {$v \gets v_\theta(s)$}
+                  \State {\Return {$v$}}
+                \Else
+                  \State {$a \gets \arg\max_{a'\in A}U(s, a')$}
+                  \State {$s' \gets {\rm get\_next\_state}(s, a)$ }
+                  \State {$v \gets {\rm MCTS}(s',\theta)$ }
+                  \State {$Q(s, a) \gets \frac{N(s,a)\times Q(s,a)+v}{1+N(s,a)}$}
+                  \State {$N(s, a) \gets N(s, a)+1$ }
+                  \State {\Return {$v$}}
+                \EndIf
+                \EndProcedure
+            \end{algorithmic}
+        % \end{algorithm}
+      \end{spacing}
+  \end{columns}
 \end{frame}
 
 \section{实验分析}
@@ -294,24 +350,21 @@
   \textbf{一些结论}
   \begin{small}
     \begin{itemize}
-      \item {\songti 人们往往认为机器学习只能在大数据的作用下发挥作用，但这是不准确的}
+      \item {\songti 人们往往认为机器学习只有在大数据的作用下才能发挥作用，但这是不准确的}
       \item {\songti 有些时候设计一个好的自学习算法比数据的输入更重要}
-      \item {\songti 不需要任何人类知识的输入，它总是和一个与自己棋力相当的AI中对局总结经验并改进自己}
+      \item {\songti 不需要任何人类知识的输入，它总是和一个与自己棋力相当的 AI 对局并从中总结经验改进自己}
       \item {\songti 使用强化学习方法相比于传统算法预测时间短（但需预先进行训练），可提升空间大}
     \end{itemize}
-
     \medskip
     \textbf{期间遇到的问题（已解决）}
     \begin{itemize}
-      \item {\songti Keras 多线程预测线程安全问题\textcolor{red}{（预先将图处理为静态的）}}
-      \item {\songti self-play 多进程 fork 时内存资源消耗严重\textcolor{red}{（减少不必要的变量复制）}}
+      \item {\songti Keras 多线程预测产生的线程安全问题\textcolor{red}{（预先将图处理为静态的）}}
+      \item {\songti 多进程 self-play fork 时产生的内存资源消耗严重的问题\textcolor{red}{（减少不必要的内存复制）}}
     \end{itemize}
     \medskip
     \textbf{展望未来}
     \begin{itemize}
-      \item {\songti Dota2（多主体、不完全信息、无限状态空间），围棋（双主体、信息完全、有限状态空间）\\  % test
-            即使后来的 AlphaZero 可以挑战 Dota2等相对于围棋更为复杂的游戏\\
-            但它们相对于现实世界来说仍然属于简单问题}
+      \item {\songti 即使后来的 AlphaZero 可以挑战 Dota2 等相对于围棋更为复杂的游戏，但这些游戏相对于现实世界来说仍然属于简单问题} % Dota2（多主体、不完全信息、无限状态空间），围棋（双主体、信息完全、有限状态空间）
       \item {\songti 步入强人工智能领域还需要走很长的路，也希望我们未来的生活会因此变得更加美好}
     \end{itemize}
   \end{small}

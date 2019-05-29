@@ -162,7 +162,7 @@ function Othello() {
 		// 发送数据
 		$.ajax({
 			type: "POST",
-			url: 'https://localhost:9420',
+			url: 'http://localhost:9420',
 			data: JSON.stringify(request),
 			dataType: "json",
 			async: true,
@@ -339,7 +339,20 @@ document.getElementById("reversi_back").onclick = function () {//悔棋
 };
 
 document.getElementById("reversi_explain").onclick = function () {//最下面解释的弹窗控件
-	alert("nothing");
+	alert("\"王道之室中 不是普通的棋局\",\n" +
+		"\"而是根据本门绝学精髓设计而成的墨攻棋阵\",\n" +
+		"\"墨攻棋阵与围棋明显的不同就是\",\n" +
+		"\"墨攻棋局中不会有任何棋子被杀死\",\n" +
+		"\"当一方的棋子被另一方棋子前后围堵\",\n" +
+		"\"那这些棋子就转化成另一方\",\n" +
+		"\"当然 如果这些棋子又被围堵时\",\n" +
+		"\"还可以再次转化\",\n" +
+		"\"最后六十四格棋盘布满时就看双方谁的棋子数量多\",\n" +
+		"\"哪一方就获胜\",\n" +
+		"\"墨攻棋局 每一次落子必须要形成转换\",\n" +
+		"\"如果对方没有可被转换的棋子时\",\n" +
+		"\"这种情况 本方就只能放弃这一轮出手\",\n" +
+		"\"能够把对手逼入这种困境 就叫作破阵 是最厉害的招数\",");
 };
 
 document.getElementById("reversi_no3d").onclick = function () {//3D棋盘切换
