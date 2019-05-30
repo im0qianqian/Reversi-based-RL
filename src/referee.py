@@ -145,12 +145,12 @@ if __name__ == "__main__":
     #                                         default_args.best_folder_file],
     #                            args=default_args)
 
-    referee = Referee(humanAI, n_player, game)
+    referee = Referee(n_player, botzoneAI, game)
 
     print('start ...')
     time0 = time.time()
     for i in range(1):
-        print(referee.play_game(verbose=True))
+        print(referee.play_game(verbose=False))
     time1 = time.time()
     print('time: ', time1 - time0)
 
