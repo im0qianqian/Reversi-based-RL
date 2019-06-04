@@ -15,6 +15,7 @@
 \usepackage{indentfirst}
 \usepackage{setspace}
 \usepackage{booktabs}
+\usepackage[level]{datetime}
 \usepackage{geometry}
 \tcbuselibrary{skins, breakable, theorems, fitting}
 
@@ -60,8 +61,8 @@
   School of Computer and Control Engineering}
 %%%%----机构信息
 
-\date[2019.05.30]{
-  2019.05.30}
+\newdateformat{ukdate}{\ordinaldate{\THEDAY} \monthname[\THEMONTH] \THEYEAR}
+\date{\ukdate\today} % 可选参数 [] 里为页面底部的日期
 %%%%----日期信息
 
 \begin{document}
