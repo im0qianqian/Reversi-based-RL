@@ -61,8 +61,9 @@
   School of Computer and Control Engineering}
 %%%%----机构信息
 
-\newdateformat{ukdate}{\ordinaldate{\THEDAY} \monthname[\THEMONTH] \THEYEAR}
-\date{\ukdate\today} % 可选参数 [] 里为页面底部的日期
+% \newdateformat{ukdate}{\ordinaldate{\THEDAY} \monthname[\THEMONTH] \THEYEAR}
+% \date{\ukdate\today} % 可选参数 [] 里为页面底部的日期
+\date{6th June 2019}
 %%%%----日期信息
 
 \begin{document}
@@ -165,10 +166,10 @@
     \begin{tcolorbox}[standard jigsaw,title=How to win,height=6.5cm,opacityback=.5,colbacktitle=black!70!white,colframe=white]
       \begin{figure}[tb]
         \centering
-        \includegraphics[width=.5\textwidth]{img/othello_end.jpg}
+        \includegraphics[width=.6\textwidth]{img/othello_end.jpg}
       \end{figure}
       \begin{footnotesize}
-        \small \textbf{游戏结束：}
+        % \small \textbf{终止条件：}
         \begin{enumerate}
           \item \songti 双方都无子可下
           \item \songti 棋子数目多者获胜，若相等为平局
@@ -182,19 +183,25 @@
 \begin{frame}
   \frametitle{Reinforcement Learning}
   \setlength{\parindent}{2em}\textrm{\songti 强化学习解决一类序贯决策问题，它不关心输入的数据长什么样子，它只关心当前采取什么样的行动才能使得最终的回报最大\\}
-  \begin{minipage}{.5\textwidth}
-    \flushleft
+  \begin{minipage}{1\textwidth}
     \begin{figure}
-      \flushleft
-      \includegraphics[width=8cm]{img/RL.png}
+      \centering
+      \includegraphics[width=8cm]{img/RL1.png}
     \end{figure}
   \end{minipage}
-  \begin{minipage}{0.4\textwidth}
-    \begin{figure}
-      \flushright
-      \includegraphics[width=5cm]{img/CoreRLConcepts.pdf}
-    \end{figure}
-  \end{minipage}
+  % \begin{minipage}{.5\textwidth}
+  %   \flushleft
+  %   \begin{figure}
+  %     \flushleft
+  %     \includegraphics[width=8cm]{img/RL.png}
+  %   \end{figure}
+  % \end{minipage}
+  % \begin{minipage}{0.4\textwidth}
+  %   \begin{figure}
+  %     \flushright
+  %     \includegraphics[width=5cm]{img/CoreRLConcepts.pdf}
+  %   \end{figure}
+  % \end{minipage}
 \end{frame}
 
 \section{系统设计}
@@ -210,8 +217,8 @@
         \column{.7\textwidth}
       \centering
     \begin{itemize}
-    \item {\footnotesize \songti $\vec{p}_\theta(s_t):$ 当前玩家在状态 $s_t$ 下选择每个动作的概率}
-    \item {\footnotesize \songti $v_\theta(s_t):$ 当前玩家在状态 $s_t$ 下获胜的概率估计}
+    \item {\footnotesize \songti $\vec{p}_\theta(s_t):$ 状态 $s_t$ 下选择每个动作的概率 $\rm vector$，$\sum{\vec{p}_\theta(s_t)}=1$}
+    \item {\footnotesize \songti $v_\theta(s_t):$ 状态 $s_t$ 下获胜的价值估计，$v_\theta(s_t)\in[-1,1]$}
     \end{itemize}
     \end{columns}
     \end{tcolorbox}
@@ -222,14 +229,14 @@
     \end{minipage}
   \begin{minipage}{0.55\textwidth}
     \begin{figure}
-      \begin{tcolorbox}[standard jigsaw,title=\footnotesize Policy Evaluation,titlerule=-.5em,opacityback=.5,colbacktitle=black!70!white,colframe=white,add to width=.5cm]
+      \begin{tcolorbox}[standard jigsaw,title=\footnotesize One action,titlerule=-.3em,opacityback=.5,colbacktitle=black!70!white,colframe=white,add to width=.5cm]
       \text{\footnotesize $f_\theta(s) \stackrel{(\vec{p}, v)}{\longrightarrow} {\rm MCTS} \stackrel{\vec{\pi}_t}{\longrightarrow} action$}
-      \text{\footnotesize \songti 到达终止态 $s_T$ 获得本局胜利者 $Z$}
+      \text{\footnotesize \songti 终止态 $s_T$ 获得本局胜利者 $Z$，产生对局数据 $(s_t, \vec{\pi}_t, z_t)$}
       \end{tcolorbox}
-      \begin{tcolorbox}[standard jigsaw,title=\footnotesize Policy Improvement,titlerule=-.5em,opacityback=.5,colbacktitle=black!70!white,colframe=white] 
-        \text{\footnotesize \songti 通过 self play 得到一组 train data}
-        \text{\footnotesize \songti 使用 train data 训练神经网络得出新 model}
-        \text{\footnotesize \songti 新旧 model 进行对抗判断胜率是否超过阈值需要更新}
+      \begin{tcolorbox}[standard jigsaw,title=\footnotesize One iteration,titlerule=-.3em,opacityback=.5,colbacktitle=black!70!white,colframe=white] 
+        \textrm{\footnotesize \songti 通过 self play 得到一组 train data\\}
+        \textrm{\footnotesize \songti 使用 train data 训练神经网络得出新 model\\}
+        \textrm{\footnotesize \songti 新旧 model 进行对抗判断胜率是否超过阈值需要更新}
       \end{tcolorbox}
     \end{figure}
   \end{minipage}
@@ -241,8 +248,8 @@
   \begin{tcolorbox}[standard jigsaw,title=\small 神经网络 $f_\theta$ (train),titlerule=0em,opacityback=.5,colbacktitle=black!70!white,colframe=white]
       \begin{columns}
         \column{.5\textwidth}
-         {\footnotesize \songti Input: ${\rm train\ data\ }(s_t, \vec{\pi}_t, z_t)$\\}
-         {\footnotesize \songti ToDo: 最小化 $\vec{p}_\theta(s_t)$ 与 $\vec{\pi}_t$，$v_\theta(s_t)$ 与 $z_t$ 间的差距}
+         \textrm{\footnotesize \songti Input: ${\rm train\ data\ }(s_t, \vec{\pi}_t, z_t)$\\}
+         \textrm{\footnotesize \songti ToDo: 最小化 $\vec{p}_\theta(s_t)$ 与 $\vec{\pi}_t$，$v_\theta(s_t)$ 与 $z_t$ 间的差距}
       \column{.5\textwidth}
         \begin{equation*}
           \footnotesize Loss = \sum_t (v_\theta(s_t) - z_t)^2 - \vec{\pi}_t \cdot \log(\vec{p}_\theta(s_t))
@@ -257,7 +264,7 @@
 
     \textbf{\small NNet Structure (CNN)}
       \begin{figure}
-        \includegraphics[width=.95\textwidth]{img/NNetStructure.pdf}
+        \includegraphics[width=1\textwidth]{img/NNetStructure2.pdf}
       \end{figure}
     
 \end{frame}
@@ -266,63 +273,80 @@
 \begin{frame}
   \frametitle{Monte Carlo Tree Search for Policy Improvement}
   \begin{columns}
-    \column{.6\textwidth}
+    \column{.55\textwidth}
+    \begin{tcolorbox}[standard jigsaw,title=\small \songti 使用 MCTS 改进神经网络预测 ${(\vec{p}, v) \gets f_\theta(s)}$,titlerule=-.3em,opacityback=.5,colbacktitle=black!70!white,colframe=white,height=6.3cm]
+      \begin{spacing}{1.15}
+    {\footnotesize \heiti 算法流程：}
+    \begin{itemize}
+      \item \footnotesize \songti 以当前状态 $s$ 作为 $Tree$ 根节点，扩展 $s'$
+      \item \footnotesize \songti 若状态 $s'\in{Tree}$，递归搜索 $s'$
+      \item \footnotesize \songti 若状态 $s'\not\in{Tree}$，创建并初始化该节点，回溯更新递归链中各节点的权值
+      \item \footnotesize \songti 若遇到终止态，直接返回最终的实际奖励
+    \end{itemize}
+    \medskip
+    \footnotesize \songti {\heiti 算法目标：}最大化置信区间上界 $U(s,a)$
+
+    \medskip
+    \setlength{\parindent}{2em}\footnotesize \songti 在经过多次 MCTS 后，$N(s,a)$ 已能为每个状态的决策提供一个很好的近似值，因此得到最终结果：
+      \centering
+      \large $N(s,a)^{\frac{1}{\tau}}$
+    \end{spacing}
+    \end{tcolorbox}
+    \column{.55\textwidth}
     \begin{figure}
         \includegraphics[width=4.5cm]{img/board.pdf}
     \end{figure}
     \begin{itemize}
-      \item \small \songti $Q(s,a)$：在状态 $s$ 下采取动作 $a$ 所得到的预期奖励
-      \item \small \songti $N(s,a)$：所有模拟中在状态 $s$ 下采取动作 $a$ 的次数
-      \item \small \songti $P(s,\cdot)=\vec{p}_\theta(s)$：在状态 $s$ 下采取动作的先验概率
-      \item \small \songti $U(s,a)$：Q value 的置信区间上界
+      \item \footnotesize \songti $Q(s,a)$：在状态 $s$ 下采取动作 $a$ 所得到的预期奖励
+      \item \footnotesize \songti $N(s,a)$：所有模拟中在状态 $s$ 下采取动作 $a$ 的次数
+      \item \footnotesize \songti $P(s,\cdot)=\vec{p}_\theta(s)$：在状态 $s$ 下采取动作的先验概率
+      \item \footnotesize \songti $U(s,a) = Q(s,a) + c_{puct}\cdot P(s,a)\cdot\frac{\sqrt{\Sigma_b N(s,b)}}{1+N(s,a)}$
     \end{itemize}
-    {\small \songti 其中 $U(s,a) = Q(s,a) + c_{puct}\cdot P(s,a)\cdot\frac{\sqrt{\Sigma_b N(s,b)}}{1+N(s,a)}$}
-    \column{.4\textwidth}
-      \begin{spacing}{.1}
-      % \begin{algorithm}[H]
-            \begin{algorithmic}[1]
-                \Procedure{MCTS}{$s, \theta$}
-                \If {$s$ is $terminal$}
-                  \State {\Return {$game\_result$}}
-                \EndIf
-                \If {$s \not\in Tree$}
-                  \State {$Tree \gets Tree \cup s$}
-                  \State {$Q(s, \cdot) \gets 0$}
-                  \State {$N(s, \cdot) \gets 0$}
-                  \State {$P(s, \cdot) \gets \vec{p}_\theta(s)$}
-                  \State {$v \gets v_\theta(s)$}
-                  \State {\Return {$v$}}
-                \Else
-                  \State {$a \gets \arg\max_{a'\in A}U(s, a')$}
-                  \State {$s' \gets {\rm get\_next\_state}(s, a)$ }
-                  \State {$v \gets {\rm MCTS}(s',\theta)$ }
-                  \State {$Q(s, a) \gets \frac{N(s,a)\times Q(s,a)+v}{1+N(s,a)}$}
-                  \State {$N(s, a) \gets N(s, a)+1$ }
-                  \State {\Return {$v$}}
-                \EndIf
-                \EndProcedure
-            \end{algorithmic}
-        % \end{algorithm}
-      \end{spacing}
+      % \begin{spacing}{.1}
+      % % \begin{algorithm}[H]
+      %       \begin{algorithmic}[1]
+      %           \Procedure{MCTS}{$s, \theta$}
+      %           \If {$s$ is $terminal$}
+      %             \State {\Return {$game\_result$}}
+      %           \EndIf
+      %           \If {$s \not\in Tree$}
+      %             \State {$Tree \gets Tree \cup s$}
+      %             \State {$Q(s, \cdot) \gets 0$}
+      %             \State {$N(s, \cdot) \gets 0$}
+      %             \State {$P(s, \cdot) \gets \vec{p}_\theta(s)$}
+      %             \State {$v \gets v_\theta(s)$}
+      %             \State {\Return {$v$}}
+      %           \Else
+      %             \State {$a \gets \arg\max_{a'\in A}U(s, a')$}
+      %             \State {$s' \gets {\rm get\_next\_state}(s, a)$ }
+      %             \State {$v \gets {\rm MCTS}(s',\theta)$ }
+      %             \State {$Q(s, a) \gets \frac{N(s,a)\times Q(s,a)+v}{1+N(s,a)}$}
+      %             \State {$N(s, a) \gets N(s, a)+1$ }
+      %             \State {\Return {$v$}}
+      %           \EndIf
+      %           \EndProcedure
+      %       \end{algorithmic}
+      %   % \end{algorithm}
+      % \end{spacing}
   \end{columns}
 \end{frame}
 
 \section{实验分析}
 \begin{frame}
   \frametitle{Experiments and Analysis}
-  \text{\heiti 一块 Tesla T4 中训练了 150h，共迭代 120 次，其中成功 29 次，平均每次成功迭代耗时 5.17h}
     \begin{figure}
       \centering
-      \includegraphics[width=11cm]{img/LOSS.pdf}
+      \includegraphics[width=12cm]{img/LOSS.pdf}
       \caption*{\songti 不同超参数配置下的 LOSS 变化曲线}
     \end{figure}
 \end{frame}
 
 \begin{frame}
   \frametitle{Experiments and Analysis}
+  \text{\heiti 一块 Tesla T4 中训练了 150h，共迭代 120 次，其中成功 29 次，平均每次成功迭代耗时 5.17h}
     \begin{figure}
       \centering
-      \includegraphics[width=12cm]{img/Figure_1.pdf}
+      \includegraphics[width=11cm]{img/Figure_1.pdf}
       \caption*{\songti Elo rating 随迭代版本的变化曲线}
     \end{figure}
 \end{frame}
@@ -346,12 +370,29 @@
 
 
 \section{总结展望}
+
 \begin{frame}
-  \frametitle{Conclusions and Prospect}
+  \frametitle{Conclusions and Prospects}
+  \begin{center}
+  \Large \textbf{我所做的工作}
+  \end{center}
+  \smallskip
+  \begin{spacing}{1.5}
+  \begin{itemize}
+    \item \songti 在传统博弈树算法以外尝试了新算法的探索
+    \item \songti 设计并实现了一个适用于双人回合制游戏的强化学习框架
+    \item \songti 设计并构建了一个兼具策略评估与价值评估的神经网络
+    \item \songti 使用蒙特卡洛搜索方法对神经网络的预测进行改进
+  \end{itemize}
+  \end{spacing}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Conclusions and Prospects}
   \textbf{一些结论}
   \begin{small}
     \begin{itemize}
-      \item {\songti 人们往往认为机器学习只有在大数据的作用下才能发挥作用，但这是不准确的}
+      \item {\songti 人们往往认为机器学习只有在大数据下才能发挥作用，但这是不准确的}
       \item {\songti 有些时候设计一个好的自学习算法比数据的输入更重要}
       \item {\songti 不需要任何人类知识的输入，它总是和一个与自己棋力相当的 AI 对局并从中总结经验改进自己}
       \item {\songti 使用强化学习方法相比于传统算法预测时间短（但需预先进行训练），可提升空间大}
