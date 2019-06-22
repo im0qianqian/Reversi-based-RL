@@ -109,10 +109,11 @@ class ReversiBotzonePlayer(Player):
     Connects to Botzone
     """
 
-    def __init__(self, game, description=""):
+    def __init__(self, game, description="", args=default_args):
         super().__init__(game, description)
         self.matches = {}
         self.is_finished = False
+        self.args = args
 
     def init(self, referee=None):
         super().init(referee=referee)
@@ -141,9 +142,7 @@ class ReversiBotzonePlayer(Player):
 
     # 从 Botzone 上拉取新的对局请求
     def fetch(self, matchClass):
-        req = urllib.request.Request(
-            "https://www.botzone.org.cn/api/576dea8e28a77f3c04a22ec3/qianqian/localai"
-        )
+        req = urllib.request.Request(self.args.botzone_local_api)
         for matchid, m in self.matches.items():
             if m.has_response and m.has_request and m.current_response:
                 print('> Response for match [%s]: %s' % (matchid,

@@ -41,4 +41,7 @@ default_args = DotDict({
     'web_http_host': ('localhost', 9420),
     'web_ssl_cert_file': os.path.join(project_root_path, './src/test/caimouse.crt'),
     'web_ssl_key_file': os.path.join(project_root_path, './src/test/caimouse.key'),
+
+    # botzone 本地 AI api （仅做测试，请勿恶意使用）
+    'botzone_local_api': 'https://www.botzone.org.cn/api/576dea8e28a77f3c04a22ec3/qianqian/localai',
 })
