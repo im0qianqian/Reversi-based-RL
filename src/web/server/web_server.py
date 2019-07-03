@@ -43,5 +43,5 @@ class ReversiWebServer(object):
 
 
 if __name__ == '__main__':
-    server = ReversiWebServer()
+    server = ReversiWebServer(default_args.web_http_host)
     server.listen()
