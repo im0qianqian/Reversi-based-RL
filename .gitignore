@@ -5,8 +5,10 @@
 .vscode/
 logs/
 src/test/
+src/data/
 tutorial/*/test/
-data/
+data/*
+!data/best.h5
 
 # User-specific files
 *.suo

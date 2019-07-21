@@ -145,7 +145,7 @@ if __name__ == "__main__":
     #                                         default_args.best_folder_file],
     #                            args=default_args)
 
-    referee = Referee(n_player, botzoneAI, game)
+    referee = Referee(n_player, n_player, game)
 
     print('start ...')
     time0 = time.time()
