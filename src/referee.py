@@ -142,12 +142,15 @@ if __name__ == "__main__":
                                args=default_args)
     # p_player = ReversiRLPlayer(game=game, choice_mode=0, nnet=None,
     #                            check_point=[default_args.checkpoint_folder,
-    #                                         default_args.best_folder_file],
+    #                                         'best1.h5'],
     #                            args=default_args)
 
     referee = Referee(n_player, n_player, game)
 
     print('start ...')
+    # n_wins, p_wins, draws = Referee(n_player, p_player, game).play_games(40, verbose=False)
+    # print('{} / {}, draws : {}'.format(n_wins, p_wins, draws))
+
     time0 = time.time()
     for i in range(1):
         print(referee.play_game(verbose=False))

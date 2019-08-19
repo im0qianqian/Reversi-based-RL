@@ -193,7 +193,7 @@ class Coach(object):
             print('load model from', self.args.train_examples_filename_format.format(self.args.iteration_start - 1))
 
         for i in range(self.args.iteration_start, self.args.iteration_start + self.args.num_iteration):  # 迭代
-            print("----------------- 第 {} 次迭代 ----------------".format(i))
+            print("----------------- {} th iteration ----------------".format(i))
             train_examples_history.append(self.parallel_self_play(i))
 
             # 保存 train_examples 数据
@@ -232,7 +232,6 @@ class Coach(object):
 
 if __name__ == '__main__':
     import pprint
-
     os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # 这样就不会有 tensorflow 的 log 了
     g = Game(8)
     pprint.pprint(default_args)
