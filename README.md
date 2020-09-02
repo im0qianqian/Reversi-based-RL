@@ -10,6 +10,43 @@
 
 ---
 
+## 开箱教程
+
+### 环境配置
+
+- python == 3.6
+- keras-gpu == 2.2.4
+- tensorflow-gpu == 1.14.0
+
+
+
+### 主要文件说明
+
+- src/config.py 参数配置文件，**其中 `project_root_path` 设置为项目路径，需更改**
+
+- src/coach.py 为强化学习 self-play 训练类
+- src/referee.py 为指挥者，指挥两个 player 的交互
+- src/web 为一个简单的客户端/服务端，有着更好的体验玩耍该游戏，demo：[https://www.dreamwings.cn/reversi-based-rl](https://www.dreamwings.cn/reversi-based-rl)
+  - 服务端启动：`python -m src.web.server.web_ssl_server`，可能需更改 config.py 下的 web_ssl_cert_file、web_ssl_key_file 等参数
+  - 客户端启动：使用浏览器打开 `src/web/client/index.html`
+- src/main.py 为程序执行文件，可参照 main 下的说明执行相应的命令
+  - 查看帮助：`python -m src.main --help`
+  - 训练模型：`python -m src.main train --simu 5 --lr 0.0001 --bs 128 --epochs 20 --use_multiprocessing`，具体参数可参看 src/config.py 中的说明
+  - 测试模型：`python -m src.main run --vs random_player rl_player`
+- tutorial/slide/im0qianqian.pdf 为毕设答辩时所用，毕业论文暂未上传
+- data/best.h5 是提供的模型训练好的参数文件
+
+
+
+### something
+
+- 本项目是我的本科毕业设计，可能一些细节还没有仔细完善好，也欢迎大家积极提出 pr
+- 因为时间原因，可能这一份 README 组织的并不是很好，也没有去其他地方宣传本份作品，若觉得本项目对你有所帮助，欢迎点一个 star
+- 在项目配置中遇到什么问题也欢迎提交 issue
+- 大一时的课程设计链接，虽然是同一个游戏，但有了不同的内涵：[https://github.com/im0qianqian/Reversi](https://github.com/im0qianqian/Reversi)
+
+---
+
 ## 进程计划
 
 - [x] 开题报告（2019.02.25 - 2019.03.10）

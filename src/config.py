@@ -16,9 +16,9 @@ default_args = DotDict({
     'num_channels': 512,
 
     'use_tpu': False,  # 使用 TPU，记得将 batch_size 增大 8 倍
-    'use_multiprocessing': True,  # 是否使用多进程模式，可能有些地方不允许创建进程
+    'use_multiprocessing': False,  # 是否使用多进程模式，可能有些地方不允许创建进程
 
-    'iteration_start': 172,  # 迭代起始数字
+    'iteration_start': 1,  # 迭代起始数字
     'num_iteration': 100,  # 训练迭代次数
     'num_episode': 100,  # 每次迭代执行 num_episode 次模拟对局，最好是 num_self_play_pool 的整数倍
     # 'temp_threshold': 15,
@@ -36,7 +36,7 @@ default_args = DotDict({
 
     'logs_folder': os.path.join(project_root_path, './data/logs/'),  # log 文件夹
 
-    'num_self_play_pool': 2,  # 模拟游戏时的进程个数
+    'num_self_play_pool': 1,  # 模拟游戏时的进程个数，貌似因为 MCTS 暂时无法同步更新，这里设置更多实际上模拟出来是相同的效果
     'num_test_play_pool': 1,  # 执行测试时的进程个数
 
     'web_http_host': ('localhost', 9420),
